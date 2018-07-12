@@ -2,11 +2,14 @@
 
 public class InputManager : Singleton<InputManager>
 {
-	public static InputMode _InputMode { get; set; }
+	public InputMode _InputMode { get; set; }
 
-	private void Awake ()
+	[SerializeField] InputMode _initialInputMode = InputMode.MainMenu;
+
+	protected override void Awake ()
 	{
-		_InputMode = InputMode.Game;
+		base.Awake ();
+		_InputMode = _initialInputMode;
 	}
 
 }
@@ -14,7 +17,7 @@ public class InputManager : Singleton<InputManager>
 public enum InputMode
 {
 	Undefined,
-	Menu,
+	MainMenu,
 	Settings,
 	Pause,
 	Game

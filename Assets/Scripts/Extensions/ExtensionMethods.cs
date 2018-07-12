@@ -47,4 +47,31 @@ public static class ExtensionMethods
 			(value_.y - fromA_) / (toA_ - fromA_) * (toB_ - fromB_) + fromB_,
 			(value_.z - fromA_) / (toA_ - fromA_) * (toB_ - fromB_) + fromB_);
 	}
+
+	public static IEnumerator FadeInCG (this CanvasGroup cg_, float fadeDuration_ = 0.2f, bool unscaled_ = false)
+	{
+		float t = 0f;
+
+		while (t < fadeDuration_)
+		{
+			if (unscaled_) t += Time.unscaledDeltaTime;
+			else t += Time.deltaTime;
+
+			cg_.alpha = t / fadeDuration_;
+			yield return 0;
+		}
+		Debug.Log (t + "  " + fadeDuration_);
+	}
+
+	public static IEnumerator FadeOutCG (this CanvasGroup cg_, float fadeDuration_ = 0.2f, bool unscaled_ = false)
+	{
+		while (fadeDuration_ > 0f)
+		{
+			if (unscaled_) fadeDuration_ -= Time.unscaledDeltaTime;
+			else fadeDuration_ -= Time.deltaTime;
+
+			cg_.alpha = fadeDuration_;
+			yield return 0;
+		}
+	}
 }
