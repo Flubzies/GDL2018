@@ -8,12 +8,11 @@ namespace Managers
 
 		private void Update ()
 		{
-			Debug.Log (InputManager._instance);
 			if (InputManager._instance._InputMode == InputMode.Game)
 			{
 				if (Input.GetKeyDown (KeyCode.P))
 				{
-					_settingsMenu.OpenMenu ();
+					_settingsMenu.ToggleMenu ();
 				}
 			}
 		}

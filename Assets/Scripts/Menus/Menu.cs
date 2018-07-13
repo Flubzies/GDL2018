@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace Managers
 {
@@ -7,11 +8,11 @@ namespace Managers
 	{
 		[SerializeField] CanvasGroup _canvasGroup;
 		[SerializeField] bool _disableCanvasGroupOnStart;
+		[SerializeField] float _menuFadeDuration = 0.2f;
 		bool _menuIsOpen;
 
 		protected override void Awake ()
 		{
-			
 			if (_disableCanvasGroupOnStart)
 			{
 				_canvasGroup.alpha = 0;
@@ -27,8 +28,9 @@ namespace Managers
 
 		public void OpenMenu ()
 		{
+			Debug.Log ("Opening");
 			if (_menuIsOpen) return;
-			_canvasGroup.FadeOutCG (0.2f, true);
+			_canvasGroup.alpha = 1.0f;
 			_canvasGroup.blocksRaycasts = true;
 			Time.timeScale = 0.0f;
 			_menuIsOpen = true;
@@ -36,11 +38,35 @@ namespace Managers
 
 		public void CloseMenu ()
 		{
+			Debug.Log ("Closing");
 			if (!_menuIsOpen) return;
-			_canvasGroup.FadeInCG (0.2f, true);
+			_canvasGroup.alpha = 0.0f;
 			_canvasGroup.blocksRaycasts = true;
 			Time.timeScale = 1.0f;
 			_menuIsOpen = false;
+		}
+
+		IEnumerator FadeInCG ()
+		{
+			float t = 0f;
+
+			while (t < _menuFadeDuration)
+			{
+				t += Time.unscaledDeltaTime;
+				_canvasGroup.alpha = t / _menuFadeDuration;
+				yield return 0;
+			}
+		}
+
+		IEnumerator FadeOutCG ()
+		{
+			Debug.Log ("Fadin Out");
+			while (_menuFadeDuration > 0f)
+			{
+				_menuFadeDuration -= Time.unscaledDeltaTime;
+				_canvasGroup.alpha = _menuFadeDuration;
+				yield return 0;
+			}
 		}
 
 		private void OnValidate ()
