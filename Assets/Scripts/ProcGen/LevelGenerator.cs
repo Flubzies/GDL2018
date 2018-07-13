@@ -113,10 +113,40 @@ public class LevelGenerator : SerializedMonoBehaviour
 		{
 			for (int y = 0; y < _gridSize; y++)
 			{
-				if (_levelMatrix[x, y] == (int) SpaceType.Occupied)
+				if (_levelMatrix[x, y] == (int) SpaceType.Occupied || _levelMatrix[x, y] == (int) SpaceType.Start)
 				{
 					spawnPoint = new Vector3 (x * ((float) _roomSize / 2.0f), 0, y * (float) _roomSize / 2.0f);
 					Instantiate (_roomPrefabs.GetRandomFromList (), spawnPoint, Quaternion.identity, transform);
+				}
+			}
+		}
+	}
+
+	[Button (ButtonSizes.Large)]
+	void GenerateNewLevel ()
+	{
+		DestroyAllChildren ();
+		ResetMatrix ();
+		GenerateMatrix ();
+		GenerateLevel ();
+	}
+
+	void DestroyWalls ()
+	{
+		int wallCount = 4;
+
+		for (int x = 0; x < _gridSize; x++)
+		{
+			for (int y = 0; y < _gridSize; y++)
+			{
+
+				// Get Adj Space Count
+				// If 1 sp then kill 1 block
+				// if 2, 3 or 4 then kill 1 randomly from the 2 3 or 4, 
+
+				for (int i = 0; i < wallCount; i++)
+				{
+
 				}
 			}
 		}
