@@ -25,6 +25,9 @@ public class LevelGenerator : SerializedMonoBehaviour
 	[SerializeField] List<Room> _roomPrefabs;
 	[Tooltip ("Must be Up Down Left Right")]
 	[SerializeField] List<Transform> _wallpoints;
+	[SerializeField] LayerMask _wallsLayerMask;
+
+	Collider[] _colliders;
 
 	int _roomCount;
 	int _failCount;
@@ -106,7 +109,6 @@ public class LevelGenerator : SerializedMonoBehaviour
 	void GenerateLevel ()
 	{
 		Debug.Log ("Generating Level");
-		Vector3 spawnPoint;
 		DestroyAllChildren ();
 
 		for (int x = 0; x < _gridSize; x++)
@@ -115,8 +117,8 @@ public class LevelGenerator : SerializedMonoBehaviour
 			{
 				if (_levelMatrix[x, y] == (int) SpaceType.Occupied || _levelMatrix[x, y] == (int) SpaceType.Start)
 				{
-					spawnPoint = new Vector3 (x * ((float) _roomSize / 2.0f), 0, y * (float) _roomSize / 2.0f);
-					Instantiate (_roomPrefabs.GetRandomFromList (), spawnPoint, Quaternion.identity, transform);
+
+					Instantiate (_roomPrefabs.GetRandomFromList (), MatrixToGridCoordinates (x, y), Quaternion.identity, transform);
 				}
 			}
 		}
@@ -129,27 +131,103 @@ public class LevelGenerator : SerializedMonoBehaviour
 		ResetMatrix ();
 		GenerateMatrix ();
 		GenerateLevel ();
+		DestroyWalls ();
 	}
 
+	[Button (ButtonSizes.Large)]
 	void DestroyWalls ()
 	{
-		int wallCount = 4;
+		Debug.Log ("Destroying walls.");
+
+		int walls = 4;
+		int adjRooms;
+
+		Vector2Int pos = Vector2Int.zero;
+		bool[] wallPosition = new bool[4];
+		Vector2Int tempVec;
 
 		for (int x = 0; x < _gridSize; x++)
 		{
 			for (int y = 0; y < _gridSize; y++)
 			{
+				if (_levelMatrix[x, y] == (int) SpaceType.Vacant || _levelMatrix[x, y] == (int) SpaceType.Blocked) continue;
 
-				// Get Adj Space Count
-				// If 1 sp then kill 1 block
-				// if 2, 3 or 4 then kill 1 randomly from the 2 3 or 4, 
+				pos = new Vector2Int (x, y);
+				adjRooms = 0;
+				wallPosition = new bool[4];
 
-				for (int i = 0; i < wallCount; i++)
+				for (int i = 0; i < walls; i++)
 				{
-
+					tempVec = GetAdjacentPos (pos, i);
+					if (_levelMatrix[tempVec.x, tempVec.y] == (int) SpaceType.Occupied || _levelMatrix[tempVec.x, tempVec.y] == (int) SpaceType.Start)
+					{
+						Debug.Log ("ASD");
+						wallPosition[i] = true;
+						adjRooms++;
+					}
+					else wallPosition[i] = false;
 				}
+
+				// We now have the adjacent room count 
+				// And the positions of the walls.
+
+				// Debug.Log (MatrixToGridCoordinates (x, y));
+
+				DestroyWallsAt (wallPosition, adjRooms, MatrixToGridCoordinates (x, y));
 			}
 		}
+		Debug.Log ("Completed");
+	}
+
+	void DestroyWallsAt (bool[] wallPositions_, int adjRooms_, Vector3 roomPos_)
+	{
+		int wallsToDelete = 1;
+		int deletedCount = 0;
+
+		switch (adjRooms_)
+		{
+			case 1:
+				wallsToDelete = 1;
+				break;
+			case 2:
+				wallsToDelete = Random.Range (2, 2);
+				break;
+			case 3:
+				wallsToDelete = Random.Range (1, 3);
+				break;
+			case 4:
+				wallsToDelete = Random.Range (1, 4);
+				break;
+		}
+
+		// number of collisions 
+		for (int i = 0; i < wallPositions_.Length; i++)
+		{
+			if (deletedCount < wallsToDelete)
+				if (wallPositions_[i])
+				{
+					_wallpoints[i].transform.position = roomPos_;
+					DestroyWall (_wallpoints[i].GetChild (0).transform.position);
+					DestroyWall (_wallpoints[i].GetChild (1).transform.position);
+					_wallpoints[i].transform.position = Vector3.zero;
+					deletedCount++;
+				}
+
+		}
+	}
+
+	void DestroyWall (Vector3 pos_)
+	{
+		_colliders = Physics.OverlapSphere (pos_, 0.2f, _wallsLayerMask);
+		foreach (Collider col in _colliders)
+		{
+			SafeDestroy.DestroyGameObject (col);
+		}
+	}
+
+	Vector3 MatrixToGridCoordinates (int x_, int y_)
+	{
+		return new Vector3 (x_ * ((float) _roomSize / 2.0f), 0, y_ * (float) _roomSize / 2.0f);
 	}
 
 	Vector2Int GetAdjacentPos (Vector2Int pos_, int dir_ = -1)
