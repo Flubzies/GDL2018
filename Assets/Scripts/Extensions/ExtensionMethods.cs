@@ -48,33 +48,33 @@ public static class ExtensionMethods
 			(value_.z - fromA_) / (toA_ - fromA_) * (toB_ - fromB_) + fromB_);
 	}
 
-	// public static IEnumerator FadeInCG (this CanvasGroup cg_, float fadeDuration_ = 0.2f, bool unscaled_ = false)
-	// {
-	// 	Debug.Log ("Fadin in");
+	public static IEnumerator FadeInCG (this CanvasGroup cg_, bool unscaled_ = false, float fadeDuration_ = 0.2f)
+	{
+		Debug.Log ("Fadin in");
 
-	// 	float t = 0f;
+		float t = 0f;
 
-	// 	while (t < fadeDuration_)
-	// 	{
-	// 		if (unscaled_) t += Time.unscaledDeltaTime;
-	// 		else t += Time.deltaTime;
+		while (t < fadeDuration_)
+		{
+			if (unscaled_) t += Time.unscaledDeltaTime;
+			else t += Time.deltaTime;
 
-	// 		cg_.alpha = t / fadeDuration_;
-	// 		yield return 0;
-	// 	}
-	// 	Debug.Log (t + "  " + fadeDuration_);
-	// }
+			cg_.alpha = t / fadeDuration_;
+			yield return 0;
+		}
+		Debug.Log (t + "  " + fadeDuration_);
+	}
 
-	// public static IEnumerator FadeOutCG (this CanvasGroup cg_, float fadeDuration_ = 0.2f, bool unscaled_ = false)
-	// {
-	// 	Debug.Log ("Fadin Out");
-	// 	while (fadeDuration_ > 0f)
-	// 	{
-	// 		if (unscaled_) fadeDuration_ -= Time.unscaledDeltaTime;
-	// 		else fadeDuration_ -= Time.deltaTime;
+	public static IEnumerator FadeOutCG (this CanvasGroup cg_, bool unscaled_ = false, float fadeDuration_ = 0.2f)
+	{
+		Debug.Log ("Fadin Out");
+		while (fadeDuration_ > 0f)
+		{
+			if (unscaled_) fadeDuration_ -= Time.unscaledDeltaTime;
+			else fadeDuration_ -= Time.deltaTime;
 
-	// 		cg_.alpha = fadeDuration_;
-	// 		yield return 0;
-	// 	}
-	// }
+			cg_.alpha = fadeDuration_;
+			yield return 0;
+		}
+	}
 }

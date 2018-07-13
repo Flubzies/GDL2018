@@ -4,7 +4,7 @@ public class InputManager : Singleton<InputManager>
 {
 	public InputMode _InputMode { get; set; }
 
-	[SerializeField] InputMode _initialInputMode = InputMode.MainMenu;
+	public InputMode _initialInputMode = InputMode.MainMenu;
 
 	protected override void Awake ()
 	{
