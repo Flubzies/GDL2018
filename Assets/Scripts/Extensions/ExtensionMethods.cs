@@ -31,7 +31,7 @@ public static class ExtensionMethods
 		return true;
 	}
 
-	public static T RandomFromList<T> (this List<T> list_)
+	public static T GetRandomFromList<T> (this List<T> list_)
 	{
 		return list_[UnityEngine.Random.Range (0, list_.Count)];
 	}
