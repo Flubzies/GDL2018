@@ -8,7 +8,7 @@ namespace Managers
 
 		private void Update ()
 		{
-			if (InputManager._instance._InputMode == InputMode.Game)
+			if (InputManager._instance._InputMode == InputMode.Game || InputManager._instance._InputMode == InputMode.Settings)
 			{
 				if (Input.GetKeyDown (KeyCode.P))
 				{

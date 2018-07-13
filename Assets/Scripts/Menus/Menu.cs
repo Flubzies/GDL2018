@@ -10,13 +10,17 @@ namespace Managers
 		[SerializeField] bool _disableCanvasGroupOnStart;
 		[SerializeField] float _menuFadeDuration = 0.2f;
 		bool _menuIsOpen;
+		InputMode _previousInputMode;
 
 		protected override void Awake ()
 		{
+			base.Awake ();
+			_previousInputMode = InputManager._instance._initialInputMode;
+
 			if (_disableCanvasGroupOnStart)
 			{
-				_canvasGroup.alpha = 0;
-				_canvasGroup.blocksRaycasts = false;
+				_menuIsOpen = true;
+				CloseMenu ();
 			}
 		}
 
@@ -30,23 +34,19 @@ namespace Managers
 		{
 			Debug.Log ("Opening");
 			if (_menuIsOpen) return;
-			_canvasGroup.alpha = 1.0f;
-			_canvasGroup.blocksRaycasts = true;
+			StartCoroutine (FadeIn ());
 			Time.timeScale = 0.0f;
-			_menuIsOpen = true;
 		}
 
 		public void CloseMenu ()
 		{
 			Debug.Log ("Closing");
 			if (!_menuIsOpen) return;
-			_canvasGroup.alpha = 0.0f;
-			_canvasGroup.blocksRaycasts = true;
+			StartCoroutine (FadeOut ());
 			Time.timeScale = 1.0f;
-			_menuIsOpen = false;
 		}
 
-		IEnumerator FadeInCG ()
+		IEnumerator FadeIn ()
 		{
 			float t = 0f;
 
@@ -56,17 +56,28 @@ namespace Managers
 				_canvasGroup.alpha = t / _menuFadeDuration;
 				yield return 0;
 			}
+
+			_previousInputMode = InputManager._instance._InputMode;
+			InputManager._instance._InputMode = InputMode.Settings;
+			_canvasGroup.blocksRaycasts = true;
+			_menuIsOpen = true;
 		}
 
-		IEnumerator FadeOutCG ()
+		IEnumerator FadeOut ()
 		{
-			Debug.Log ("Fadin Out");
-			while (_menuFadeDuration > 0f)
+			float t = _menuFadeDuration;
+
+			while (t > 0)
 			{
-				_menuFadeDuration -= Time.unscaledDeltaTime;
-				_canvasGroup.alpha = _menuFadeDuration;
+				t -= Time.unscaledDeltaTime;
+				_canvasGroup.alpha = t;
+				Debug.Log (_canvasGroup.alpha);
 				yield return 0;
 			}
+
+			InputManager._instance._InputMode = _previousInputMode;
+			_canvasGroup.blocksRaycasts = false;
+			_menuIsOpen = false;
 		}
 
 		private void OnValidate ()
