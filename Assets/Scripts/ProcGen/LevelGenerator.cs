@@ -18,6 +18,7 @@ public class LevelGenerator : SerializedMonoBehaviour
 	public int[, ] _levelMatrix;
 
 	[SerializeField] int _gridSize;
+	[SerializeField] int _roomSize;
 	[SerializeField] float _minRoomCount;
 	[SerializeField] int _maxFailCount = 5;
 
@@ -106,6 +107,7 @@ public class LevelGenerator : SerializedMonoBehaviour
 	{
 		Debug.Log ("Generating Level");
 		Vector3 spawnPoint;
+		DestroyAllChildren ();
 
 		for (int x = 0; x < _gridSize; x++)
 		{
@@ -113,8 +115,8 @@ public class LevelGenerator : SerializedMonoBehaviour
 			{
 				if (_levelMatrix[x, y] == (int) SpaceType.Occupied)
 				{
-					spawnPoint = new Vector3 (x * (float) _gridSize / 2.0f, y * (float) _gridSize / 2.0f);
-					Instantiate (_roomPrefabs.GetRandomFromList (), spawnPoint, Quaternion.identity);
+					spawnPoint = new Vector3 (x * ((float) _roomSize / 2.0f), 0, y * (float) _roomSize / 2.0f);
+					Instantiate (_roomPrefabs.GetRandomFromList (), spawnPoint, Quaternion.identity, transform);
 				}
 			}
 		}
