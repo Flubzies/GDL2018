@@ -8,7 +8,7 @@ public static class ExtensionMethods
 	public static void RotateTowardsVector (this Transform trans_, Vector2 vel_, float rotSpeed_ = 4.0f, float angleOffset_ = 0.0f)
 	{
 		float angle = Mathf.Atan2 (vel_.y, vel_.x) * Mathf.Rad2Deg;
-		trans_.rotation = Quaternion.Lerp (trans_.rotation, Quaternion.AngleAxis (angle + angleOffset_, Vector3.forward), Time.deltaTime * rotSpeed_);
+		trans_.rotation = Quaternion.Lerp (trans_.rotation, Quaternion.AngleAxis (angle + angleOffset_, Vector3.up), Time.deltaTime * rotSpeed_);
 	}
 
 	public static Vector3 ToInt (this Vector3 vec_)
@@ -75,6 +75,21 @@ public static class ExtensionMethods
 
 			cg_.alpha = fadeDuration_;
 			yield return 0;
+		}
+	}
+
+	private static System.Random rng = new System.Random ();
+
+	public static void Shuffle<T> (this IList<T> list)
+	{
+		int n = list.Count;
+		while (n > 1)
+		{
+			n--;
+			int k = rng.Next (n + 1);
+			T value = list[k];
+			list[k] = list[n];
+			list[n] = value;
 		}
 	}
 }

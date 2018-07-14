@@ -8,7 +8,13 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Cube.001
+    4300002: pCube75
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BaseCarpet
+    second: {fileID: 2100000, guid: 662c95b21d331c846a35d5bad181af68, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

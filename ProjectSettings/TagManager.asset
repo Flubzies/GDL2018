@@ -14,7 +14,7 @@ TagManager:
   - 
   - 
   - Wall
-  - 
+  - Floor
   - 
   - 
   - 
@@ -43,4 +43,7 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 2200419789
+    locked: 0
+  - name: Projectile
+    uniqueID: 3499755655
     locked: 0

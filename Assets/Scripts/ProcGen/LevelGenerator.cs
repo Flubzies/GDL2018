@@ -14,8 +14,7 @@ public class LevelGenerator : SerializedMonoBehaviour
 		Start
 	}
 
-	[ReadOnly][TableMatrix (SquareCells = true)]
-	public int[, ] _levelMatrix;
+	int[, ] _levelMatrix;
 
 	[SerializeField] int _gridSize;
 	[SerializeField] int _roomSize;
@@ -80,9 +79,6 @@ public class LevelGenerator : SerializedMonoBehaviour
 			AddRoomToMatrix (currentPos);
 		}
 
-		// GenerateLevel();
-		// After that generate the corridors.
-
 		Debug.Log ("Matrix Generation Complete. Room Count: " + _roomCount);
 	}
 
@@ -117,11 +113,16 @@ public class LevelGenerator : SerializedMonoBehaviour
 			{
 				if (_levelMatrix[x, y] == (int) SpaceType.Occupied || _levelMatrix[x, y] == (int) SpaceType.Start)
 				{
-
-					Instantiate (_roomPrefabs.GetRandomFromList (), MatrixToGridCoordinates (x, y), Quaternion.identity, transform);
+					RandYRot (Instantiate (_roomPrefabs.GetRandomFromList ().transform, MatrixToGridCoordinates (x, y), Quaternion.identity, transform));
 				}
 			}
 		}
+	}
+
+	protected void RandYRot (Transform trans_)
+	{
+		int x = Random.Range (0, 4);
+		trans_.rotation = Quaternion.AngleAxis (x * 90, Vector3.up);
 	}
 
 	[Button (ButtonSizes.Large)]
@@ -161,7 +162,6 @@ public class LevelGenerator : SerializedMonoBehaviour
 					tempVec = GetAdjacentPos (pos, i);
 					if (_levelMatrix[tempVec.x, tempVec.y] == (int) SpaceType.Occupied || _levelMatrix[tempVec.x, tempVec.y] == (int) SpaceType.Start)
 					{
-						Debug.Log ("ASD");
 						wallPosition[i] = true;
 						adjRooms++;
 					}
@@ -183,6 +183,7 @@ public class LevelGenerator : SerializedMonoBehaviour
 	{
 		int wallsToDelete = 1;
 		int deletedCount = 0;
+		int[] randomizedArray = new int[] { 0, 1, 2, 3 };
 
 		switch (adjRooms_)
 		{
@@ -190,7 +191,7 @@ public class LevelGenerator : SerializedMonoBehaviour
 				wallsToDelete = 1;
 				break;
 			case 2:
-				wallsToDelete = Random.Range (2, 2);
+				wallsToDelete = 2;
 				break;
 			case 3:
 				wallsToDelete = Random.Range (1, 3);
@@ -200,16 +201,32 @@ public class LevelGenerator : SerializedMonoBehaviour
 				break;
 		}
 
+		randomizedArray.Shuffle ();
+
 		// number of collisions 
 		for (int i = 0; i < wallPositions_.Length; i++)
 		{
+
+			// generate a random number from 1-4 this is the random wall to be destroyed.
+			// randIndex must not be < i
+			// randIndex has to be < wallPositions_.Length
+			// randIndex must not be equal to wallPos[i] == false
+			// if randIndex is == wallPos[i] == false && wallPositions_.Length
+			// then exit the loop
+			// randIndex
+
+			// 1 walls to delete so we have to do this for loop once at a random index
+			// 2 walls to delete 2 walls at 2 random idicies.
+
 			if (deletedCount < wallsToDelete)
-				if (wallPositions_[i])
+				if (wallPositions_[randomizedArray[i]])
 				{
-					_wallpoints[i].transform.position = roomPos_;
-					DestroyWall (_wallpoints[i].GetChild (0).transform.position);
-					DestroyWall (_wallpoints[i].GetChild (1).transform.position);
-					_wallpoints[i].transform.position = Vector3.zero;
+					// These wall can be deleted if wanted.
+
+					_wallpoints[randomizedArray[i]].transform.position = roomPos_;
+					DestroyWall (_wallpoints[randomizedArray[i]].GetChild (0).transform.position);
+					DestroyWall (_wallpoints[randomizedArray[i]].GetChild (1).transform.position);
+					_wallpoints[randomizedArray[i]].transform.position = Vector3.zero;
 					deletedCount++;
 				}
 
