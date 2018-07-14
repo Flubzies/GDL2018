@@ -29,12 +29,14 @@ public class CameraController : MonoBehaviour
 		_tempFloat = Input.GetAxisRaw ("Horizontal");
 		if (Mathf.Abs (_tempFloat) > 0.1)
 		{
-			transform.position = Vector3.Lerp (transform.position, transform.position + _camOffset.right * _tempFloat, _damping * Time.deltaTime);
+			//transform.position = Vector3.Lerp (transform.position, transform.position + _camOffset.right * _tempFloat, _damping * Time.deltaTime);
+			transform.Translate (_camOffset.right * _tempFloat * _damping * Time.deltaTime);
 		}
 		_tempFloat = Input.GetAxisRaw ("Vertical");
 		if (Mathf.Abs (_tempFloat) > 0.1)
 		{
-			transform.position = Vector3.Lerp (transform.position, transform.position + _camOffset.forward * _tempFloat, _damping * Time.deltaTime);
+			//transform.position = Vector3.Lerp (transform.position, transform.position + _camOffset.f * _tempFloat, _damping * Time.deltaTime);
+			transform.Translate (_camOffset.forward * _tempFloat * _damping * Time.deltaTime);
 		}
 	}
 
