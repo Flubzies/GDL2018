@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b9afd63adfe3c0747ad7d59aad07906f
+guid: 7aa943ffec28b3343b5a9c722ae06d47
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -7,34 +7,28 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Cube.001
-    4300002: pCube75
+    4300000: pCube42
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: BaseCarpet
-    second: {fileID: 2100000, guid: 662c95b21d331c846a35d5bad181af68, type: 2}
+    second: {fileID: 2100000, guid: fc400b0ac41f21f46bdad5078ec8765c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CarpetTrim
+    second: {fileID: 2100000, guid: 95f4e2e9e5e1bd44f9835824e325f535, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FloorTrim
+    second: {fileID: 2100000, guid: fbe31e4c193405247b4231c9c89212f2, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert1
-    second: {fileID: 2100000, guid: c967e9fa0df732445a112e2f5b7b1c18, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert2
-    second: {fileID: 2100000, guid: bd13489be74a99640a0dcee55157336f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert3
-    second: {fileID: 2100000, guid: c967e9fa0df732445a112e2f5b7b1c18, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: lambert5
-    second: {fileID: 2100000, guid: f490d6a4ecc79a04e9568be2a6259d15, type: 2}
+    second: {fileID: 2100000, guid: fbe31e4c193405247b4231c9c89212f2, type: 2}
   materials:
     importMaterials: 0
     materialName: 0
