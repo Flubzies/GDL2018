@@ -21,6 +21,7 @@ public class CameraController : MonoBehaviour
 		if (InputManager._instance._InputMode == InputMode.Game)
 		{
 			CamMovementPC ();
+			ScrollZoom();
 		}
 	}
 

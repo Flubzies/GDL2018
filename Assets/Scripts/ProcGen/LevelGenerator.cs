@@ -14,8 +14,7 @@ public class LevelGenerator : SerializedMonoBehaviour
 		Start
 	}
 
-	[ReadOnly][TableMatrix (SquareCells = true)]
-	public int[, ] _levelMatrix;
+	int[, ] _levelMatrix;
 
 	[SerializeField] int _gridSize;
 	[SerializeField] int _roomSize;
@@ -114,11 +113,16 @@ public class LevelGenerator : SerializedMonoBehaviour
 			{
 				if (_levelMatrix[x, y] == (int) SpaceType.Occupied || _levelMatrix[x, y] == (int) SpaceType.Start)
 				{
-
-					Instantiate (_roomPrefabs.GetRandomFromList (), MatrixToGridCoordinates (x, y), Quaternion.identity, transform);
+					RandYRot (Instantiate (_roomPrefabs.GetRandomFromList ().transform, MatrixToGridCoordinates (x, y), Quaternion.identity, transform));
 				}
 			}
 		}
+	}
+
+	protected void RandYRot (Transform trans_)
+	{
+		int x = Random.Range (0, 4);
+		trans_.rotation = Quaternion.AngleAxis (x * 90, Vector3.up);
 	}
 
 	[Button (ButtonSizes.Large)]

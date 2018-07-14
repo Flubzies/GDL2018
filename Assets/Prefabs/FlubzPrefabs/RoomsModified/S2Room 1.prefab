@@ -536,7 +536,8 @@ GameObject:
   - component: {fileID: 4609395321480576}
   - component: {fileID: 33234676831159432}
   - component: {fileID: 23906718939692114}
-  m_Layer: 0
+  - component: {fileID: 65400078573188128}
+  m_Layer: 9
   m_Name: Test_Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3721,6 +3722,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.9830627, y: 2.2417073, z: 10.745214}
   m_Center: {x: -0.00000059604645, y: 0, z: 0.00000023841858}
+--- !u!65 &65400078573188128
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1701647236370670}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 40, y: 0.49995494, z: 40}
+  m_Center: {x: 0, y: -0.15002248, z: 0}
 --- !u!65 &65507891265473102
 BoxCollider:
   m_ObjectHideFlags: 1
