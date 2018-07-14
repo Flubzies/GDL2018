@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f7749d87ad8d6a94d8f48bf581d7f8ed
+guid: 12d86b5fd376705468c8c1f03186278e
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -7,18 +7,8 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: ClosedBox
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: DarkBox
-    second: {fileID: 2100000, guid: 9a8f14084250b974abc7778a780c7e0f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: LightBox
-    second: {fileID: 2100000, guid: b99695aff3db91c41b54ae95ff62ba99, type: 2}
+    4300000: pCylinder2
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0

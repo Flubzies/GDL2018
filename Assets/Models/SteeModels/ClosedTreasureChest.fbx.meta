@@ -8,7 +8,17 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: ClosedTreasureChest
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ChestBody
+    second: {fileID: 2100000, guid: a193bf1a57f0ac94c9999c479a8320b9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ChestTrim
+    second: {fileID: 2100000, guid: 23148bc3b809e3547af9d4c06e7581d0, type: 2}
   materials:
     importMaterials: 0
     materialName: 0
