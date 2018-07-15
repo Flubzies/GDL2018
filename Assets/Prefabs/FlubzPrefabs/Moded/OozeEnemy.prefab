@@ -121,7 +121,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1740849161957094
 GameObject:
   m_ObjectHideFlags: 1
@@ -287,7 +287,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1620617443737188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 279.4, y: 0, z: 243.9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 4077758177230320}
@@ -389,6 +389,8 @@ MonoBehaviour:
   _audioSource: {fileID: 0}
   _animator: {fileID: 95115872574208670}
   _xAxisOffset: -90
+  _health: {fileID: 114875505084277042}
+  _root: {fileID: 1620617443737188}
 --- !u!114 &114875505084277042
 MonoBehaviour:
   m_ObjectHideFlags: 1

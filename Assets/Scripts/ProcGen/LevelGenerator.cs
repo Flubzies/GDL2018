@@ -34,12 +34,13 @@ public class LevelGenerator : MonoBehaviour
 
 	[SerializeField] PrefabGenerator _prefabGen;
 	bool _playerSpawned;
-	[SerializeField] PlayerScott _player;
+	[SerializeField] Transform _player;
 	[SerializeField] Transform _camera;
 
 	[Title ("Generate")]
 	[SerializeField] bool _generateOnAwake;
 	[SerializeField] bool _IsEditMode;
+	List<Transform> _listSpawners = new List<Transform> ();
 
 	Collider[] _colliders;
 
@@ -62,6 +63,16 @@ public class LevelGenerator : MonoBehaviour
 			GenerateLevel ();
 		}
 		if (_generateOnAwake) GenerateNewLevel ();
+	}
+
+	public int GetSpawnerCount ()
+	{
+		int count = 0;
+		for (int i = 0; i < _listSpawners.Count; i++)
+		{
+			if (_listSpawners[i].gameObject.activeSelf) count++;
+		}
+		return count;
 	}
 
 	[ButtonGroup ("Level Generator", 0)]
@@ -143,6 +154,7 @@ public class LevelGenerator : MonoBehaviour
 		Room tempRoom;
 		RoomPrefabType rpt;
 		Transform trans;
+		_listSpawners.Clear ();
 
 		for (int x = 0; x < _gridSize; x++)
 		{
@@ -156,8 +168,11 @@ public class LevelGenerator : MonoBehaviour
 
 					if (rpt != RoomPrefabType.Undefined)
 					{
-						trans = _prefabGen.GetPrefab (rpt);
-						Instantiate (trans, tempRoom.transform.position, Quaternion.identity, tempRoom.transform);
+						{
+							trans = _prefabGen.GetPrefab (rpt);
+							Instantiate (trans, tempRoom.transform.position, Quaternion.identity, tempRoom.transform);
+							_listSpawners.Add (trans);
+						}
 					}
 				}
 			}

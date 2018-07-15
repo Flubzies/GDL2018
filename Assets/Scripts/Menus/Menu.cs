@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Managers
 {
@@ -9,7 +10,8 @@ namespace Managers
 		[SerializeField] CanvasGroup _canvasGroup;
 		[SerializeField] bool _disableCanvasGroupOnStart;
 		[SerializeField] float _menuFadeDuration = 0.2f;
-		
+		[SerializeField] Text _text;
+
 		bool _menuIsOpen;
 
 		protected override void Awake ()
@@ -22,6 +24,11 @@ namespace Managers
 				_menuIsOpen = true;
 				CloseMenu ();
 			}
+		}
+
+		public void GameIsOver ()
+		{
+			_text.text = "THE TAINT HAS BEEN DEFEATED!";
 		}
 
 		public void ToggleMenu ()

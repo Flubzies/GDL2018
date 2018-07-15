@@ -21,5 +21,14 @@ namespace Managers
 				SettingsMenu._instance.ToggleMenu ();
 			}
 		}
+
+		public void CheckGameOverState ()
+		{
+			if (LevelGenerator._instance.GetSpawnerCount () == 0)
+			{
+				SettingsMenu._instance.ToggleMenu ();
+				SettingsMenu._instance.GameIsOver ();
+			}
+		}
 	}
 }

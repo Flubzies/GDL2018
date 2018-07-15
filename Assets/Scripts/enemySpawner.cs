@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Managers;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -17,8 +18,8 @@ public class EnemySpawner : MonoBehaviour
         _listEnemies = new List<GameObject> ();
         StartCoroutine (CreateEnemies ());
         StartCoroutine (SpawnEnemiesWithDelay ());
-        _health.DeathEvent += ThisDeath;
         _health.DamagedEvent += ThisDamage;
+        _health.DeathEvent += ThisDeath;
     }
 
     Vector3 SpawnLoc ()
@@ -44,14 +45,16 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    void ThisDeath ()
-    {
-        gameObject.SetActive (false);
-    }
-
     void ThisDamage ()
     {
         Debug.Log (_health._GetHealthPercent);
+    }
+
+    void ThisDeath ()
+    {
+        Debug.Log ("Death");
+        ApplicationManager._instance.CheckGameOverState ();
+        this.gameObject.SetActive (false);
     }
 
     IEnumerator SpawnEnemiesWithDelay ()

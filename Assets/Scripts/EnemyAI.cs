@@ -27,6 +27,8 @@ public class EnemyAI : MonoBehaviour
 	[SerializeField] AudioSource _audioSource;
 	[SerializeField] Animator _animator;
 	[SerializeField] float _xAxisOffset = 90;
+	[SerializeField] Health _health;
+	[SerializeField] GameObject _root;
 
 	Path _path;
 	Seeker _seeker;
@@ -44,6 +46,7 @@ public class EnemyAI : MonoBehaviour
 		_rb = GetComponent<Rigidbody> ();
 		_target = null;
 		StartCoroutine (SearchForPlayer ());
+		_health.DeathEvent += ThisDeath;
 	}
 
 	public void StartChasingPlayer (Transform target_)
@@ -51,7 +54,6 @@ public class EnemyAI : MonoBehaviour
 		//_audioSource.Play ();
 		_target = target_;
 		if (_target == null) return;
-		Debug.Log ("Found Target");
 		_seeker.StartPath (transform.position, _target.position, OnPathComplete);
 		StartCoroutine (UpdatePath ());
 	}
@@ -136,6 +138,11 @@ public class EnemyAI : MonoBehaviour
 		}
 	}
 
+	void ThisDeath ()
+	{
+		_root.SetActive (false);
+	}
+
 	IEnumerator SearchForPlayer ()
 	{
 
@@ -153,6 +160,15 @@ public class EnemyAI : MonoBehaviour
 		{
 			yield return new WaitForSeconds (_searchForPlayerSeconds);
 			StartCoroutine (SearchForPlayer ());
+		}
+	}
+
+	private void OnCollisionEnter (Collision other)
+	{
+		Health h = other.transform.GetComponent<Health> ();
+		if (h)
+		{
+			h.Damage (_damageAmount);
 		}
 	}
 }

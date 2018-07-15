@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerScott : MonoBehaviour
 {
@@ -19,7 +22,7 @@ public class PlayerScott : MonoBehaviour
     [SerializeField] float _rotationOffset = -90.0f;
 
     [Title ("Player Atttacking")]
-    [SerializeField] Transform _firePoint;
+    [SerializeField] List<Transform> _firePoint;
     [SerializeField] int _playerDamage;
     [SerializeField] float _attackDuration = 0.5f;
     float _timeUntilLastAttack;
@@ -46,6 +49,25 @@ public class PlayerScott : MonoBehaviour
 
     [Title ("Animations")]
     [SerializeField] Animator _animator;
+    [SerializeField] Health _health;
+    [SerializeField] Slider _slider;
+
+    private void Awake ()
+    {
+        _health.DamagedEvent += ThisDamaged;
+        _health.DeathEvent += ThisDeath;
+        _cameraOffset = GameObject.FindGameObjectWithTag ("CamOffset").transform;
+    }
+
+    void ThisDamaged ()
+    {
+        _slider.value = _health._GetHealthPercent;
+    }
+
+    void ThisDeath ()
+    {
+        SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
+    }
 
     void FixedUpdate ()
     {
@@ -104,22 +126,26 @@ public class PlayerScott : MonoBehaviour
             if (Input.GetMouseButtonDown (0))
             {
                 Health h;
+                _hitEffect.Play ();
                 _isAttacking = true;
                 // AttackAbility ();
                 _particleSystem.Emit (1);
                 _slashSound.Play ();
                 _animator.SetTrigger ("isAttacking");
                 _timeUntilNextAttackRate = Time.time + 1 / _attackRate;
-                _colliders = Physics.OverlapSphere (_firePoint.position, _attackSphereSize, _enemyLM);
-
-                foreach (var item in _colliders)
+                foreach (var firePoint in _firePoint)
                 {
-                    h = item.GetComponent<Health> ();
-                    if (h)
+                    _colliders = Physics.OverlapSphere (firePoint.position, _attackSphereSize, _enemyLM);
+
+                    foreach (var item in _colliders)
                     {
-                        Debug.Log("Damagin");
-                        h.Damage (_playerDamage);
-                        _hitEffect.Play ();
+                        h = item.GetComponent<Health> ();
+                        if (h != null)
+                        {
+                            h.Damage (_playerDamage);
+                            // _hitEffect.transform.position = item.transform.position;
+                            // _hitEffect.Play ();
+                        }
                     }
                 }
 
