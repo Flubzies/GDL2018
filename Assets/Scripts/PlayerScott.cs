@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -33,22 +32,11 @@ public class PlayerScott : MonoBehaviour
     private Vector3 _mousePos;
     private Vector3 _direction;
 
-	static Animator anim;
-	public ParticleSystem particleSwipe;
-	public AudioSource SlashSound;
-
+    public ParticleSystem particleSwipe;
+    public AudioSource SlashSound;
 
     [Title ("Animations")]
     [SerializeField] Animator _animator;
-    [HideInInspector] public float _velX;
-    [HideInInspector] public float _velY;
-    [HideInInspector] public bool _isMoving;
-    [HideInInspector] public bool _justAttacked;
-
-	void Start ()
-	{
-		anim = GetComponent<Animator> ();
-	}
 
     void FixedUpdate ()
     {
@@ -65,8 +53,7 @@ public class PlayerScott : MonoBehaviour
         _movement = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));
         if (_movement.magnitude > _deadZone)
         {
-            _isMoving = true;
-			anim.SetBool("isRunning", true);
+            _animator.SetBool ("isRunning", true);
             Vector3 newMovement = _cameraOffset.forward * _movement.normalized.z + _cameraOffset.right * _movement.normalized.x;
             newMovement = Vector3.ClampMagnitude (newMovement, 1 / Mathf.Sqrt (2)) * Mathf.Sqrt (2);
 
@@ -74,17 +61,14 @@ public class PlayerScott : MonoBehaviour
         }
         else
         {
-            _isMoving = false;
             _rb.velocity *= _decelerationRate * Time.fixedDeltaTime;
-			anim.SetBool ("isRunning", false);
+            _animator.SetBool ("isRunning", false);
         }
         if (!_isAttacking && _rb.velocity.magnitude > _rotationDeadZone)
         {
             transform.rotation = Quaternion.LookRotation (_rb.velocity, Vector3.up);
         }
 
-        _velX = _rb.velocity.x;
-        _velY = _rb.velocity.y;
     }
 
     private void PlayerRotation ()
@@ -103,7 +87,6 @@ public class PlayerScott : MonoBehaviour
         if (_isAttacking && Time.time > _timeUntilLastAttack && _attackDuration != 0)
         {
             _isAttacking = false;
-            _justAttacked = false;
             _timeUntilLastAttack = Time.time + 1 / _attackDuration;
         }
 
@@ -112,33 +95,26 @@ public class PlayerScott : MonoBehaviour
             if (Input.GetMouseButtonDown (0))
             {
                 _isAttacking = true;
-                _justAttacked = true;
                 AttackAbility ();
                 _timeUntilNextAttackRate = Time.time + 1 / _attackRate;
-				anim.SetTrigger ("isAttacking");
-				SlashSound.Play ();
+                _animator.SetTrigger ("isAttacking");
+                SlashSound.Play ();
 
-
-				//Debug.Log ("not working");
-
-
+                //Debug.Log ("not working");
 
             }
         }
     }
+
     void AttackAbility ()
     {
-		
         StartCoroutine (RotateForAttackDuration ());
     }
 
-
-
     IEnumerator RotateForAttackDuration ()
     {
-		yield return new WaitForSeconds (0.3f);
-		particleSwipe.Emit (1);
-
+        yield return new WaitForSeconds (0.3f);
+        particleSwipe.Emit (1);
 
         while (_isAttacking)
         {

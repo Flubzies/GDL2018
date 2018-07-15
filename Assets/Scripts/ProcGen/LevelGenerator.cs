@@ -32,11 +32,14 @@ public class LevelGenerator : MonoBehaviour
 	[SerializeField] LayerMask _wallsLayerMask;
 	[SerializeField] AstarPath _astar;
 
+	[SerializeField] PrefabGenerator _prefabGen;
+	bool _playerSpawned;
+	[SerializeField] Transform _player;
+	[SerializeField] Transform _camera;
+
 	[Title ("Generate")]
 	[SerializeField] bool _generateOnAwake;
 	[SerializeField] bool _IsEditMode;
-	bool _playerSpawned;
-	[SerializeField] Transform _playerSpawnLoc;
 
 	Collider[] _colliders;
 
@@ -150,11 +153,11 @@ public class LevelGenerator : MonoBehaviour
 					tempRoom = Instantiate (_roomPrefabs.GetRandomFromList (), MatrixToGridCoordinates (x, y), Quaternion.identity, transform);
 					RandYRot (tempRoom.transform);
 					rpt = tempRoom._roomPrefabType;
-
+					
 					if (rpt != RoomPrefabType.Undefined)
 					{
-						trans = PrefabGenerator._instance.GetPrefab (rpt);
-						Instantiate (trans, tempRoom._spawnLocation.position, Quaternion.identity, tempRoom.transform);
+						trans = _prefabGen.GetPrefab (rpt);
+						Instantiate (trans, tempRoom.transform.position, Quaternion.identity, tempRoom.transform);
 					}
 				}
 			}
@@ -224,7 +227,7 @@ public class LevelGenerator : MonoBehaviour
 	IEnumerator ScanGraph ()
 	{
 		yield return new WaitForSeconds (1.0f);
-		_astar.graphs[0].Scan ();
+		_astar.Scan ();
 	}
 
 	void DestroyWallsAt (bool[] wallPositions_, int adjRooms_, Vector3 roomPos_)
