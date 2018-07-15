@@ -2,51 +2,62 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class enemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] protected List <GameObject> _enemyPrefabs;
+    [SerializeField] protected GameObject _enemyPrefab;
+    [SerializeField] protected int _maxEnemies;
+    protected List<GameObject> _listEnemies;
+
     [SerializeField] protected float _activateDelay;
-    [SerializeField] protected Transform _spawnLocation;
+    [SerializeField] protected float _spawnRadius;
 
     void Start ()
     {
-        initialSpawn();
-
-        StartCoroutine(activateEnemy());
-    }
-	
-	void Update ()
-    {
-
+        _listEnemies = new List<GameObject> ();
+        StartCoroutine (CreateEnemies ());
+        StartCoroutine (SpawnEnemiesWithDelay ());
     }
 
-    void initialSpawn()
+    Vector3 SpawnLoc ()
     {
-        for (int i = 0; i < _enemyPrefabs.Count; i++)
+        Vector3 _randomSpawn = new Vector3 (Random.insideUnitSphere.x * _spawnRadius, 1, Random.insideUnitSphere.z * _spawnRadius);
+        return transform.position + _randomSpawn;
+    }
+
+    void CreateEnemy ()
+    {
+        SpawnLoc ();
+        GameObject enemy = (GameObject) Instantiate (_enemyPrefab, SpawnLoc (), Quaternion.identity, transform);
+        _listEnemies.Add (enemy);
+        enemy.SetActive (false);
+    }
+
+    IEnumerator CreateEnemies ()
+    {
+        while (_listEnemies.Count != _maxEnemies)
         {
-            Instantiate(_enemyPrefabs[i], _spawnLocation.position, Quaternion.identity);
-            _enemyPrefabs[i].SetActive(false);
-
+            yield return new WaitForSeconds (_activateDelay / 2.0f);
+            CreateEnemy ();
         }
     }
 
-    IEnumerator activateEnemy()
+    IEnumerator SpawnEnemiesWithDelay ()
     {
-        Debug.Log(_enemyPrefabs.Count);
-        while(true)
+        while (true)
         {
+            yield return new WaitForSeconds (_activateDelay);
 
-            for (int i = 0; i < _enemyPrefabs.Count; i++)
+            for (int i = 0; i < _maxEnemies; i++)
             {
-                if (_enemyPrefabs[i].activeSelf == false)
+                if (_listEnemies[i] == null) continue;
+
+                if (_listEnemies[i].activeSelf == false)
                 {
-                    _enemyPrefabs[i].SetActive(true);
-                    Debug.Log("Did it");
+                    _listEnemies[i].transform.position = SpawnLoc ();
+                    _listEnemies[i].SetActive (true);
+                    break;
                 }
-
             }
-
-            yield return new WaitForSeconds(_activateDelay);
         }
     }
 }

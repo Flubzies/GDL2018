@@ -16,12 +16,10 @@ namespace Managers
 
 		private void Update ()
 		{
-			// if (InputManager._instance._InputMode == InputMode.Game || InputManager._instance._InputMode == InputMode.Settings)
-
-			// if (Input.GetKeyDown (KeyCode.P))
-			// {
-			// 	_settingsMenu.ToggleMenu ();
-			// }
+			if (Input.GetKeyDown (KeyCode.P))
+			{
+				SettingsMenu._instance.ToggleMenu ();
+			}
 		}
 	}
 }
