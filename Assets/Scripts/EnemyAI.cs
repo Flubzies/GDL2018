@@ -39,6 +39,7 @@ public class EnemyAI : MonoBehaviour
 	void Awake ()
 	{
 		//_audioSource = GetComponent<AudioSource> ();
+
 		_seeker = GetComponent<Seeker> ();
 		_rb = GetComponent<Rigidbody> ();
 		_target = null;
@@ -50,6 +51,7 @@ public class EnemyAI : MonoBehaviour
 		//_audioSource.Play ();
 		_target = target_;
 		if (_target == null) return;
+		Debug.Log ("Found Target");
 		_seeker.StartPath (transform.position, _target.position, OnPathComplete);
 		StartCoroutine (UpdatePath ());
 	}
@@ -73,6 +75,8 @@ public class EnemyAI : MonoBehaviour
 	{
 		if (_target != null)
 		{
+			Debug.Log ("Moving towards player");
+
 			_animator.SetBool ("_isMoving", true);
 			_seeker.StartPath (transform.position, _target.position, OnPathComplete);
 			_distanceToTarget = Vector3.Distance (transform.position, _target.position);
@@ -108,6 +112,7 @@ public class EnemyAI : MonoBehaviour
 
 	void FixedUpdate ()
 	{
+
 		if (_target == null) return;
 		if (_path == null) return;
 
@@ -134,6 +139,7 @@ public class EnemyAI : MonoBehaviour
 
 	IEnumerator SearchForPlayer ()
 	{
+
 		GameObject sResult = GameObject.FindGameObjectWithTag ("Player");
 		if (sResult == null)
 		{

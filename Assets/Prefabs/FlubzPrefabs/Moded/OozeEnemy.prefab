@@ -376,10 +376,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pathIsEnded: 0
-  _updateRate: 1
+  _updateRate: 1.5
   _speed: 360
-  _nextWaypointDist: 1
-  _distToStartChasePlayer: 15
+  _nextWaypointDist: 2
+  _distToStartChasePlayer: 18
   _distToStopChasePlayer: 60
   _distToStartDamaging: 3
   _searchForPlayerSeconds: 1.5

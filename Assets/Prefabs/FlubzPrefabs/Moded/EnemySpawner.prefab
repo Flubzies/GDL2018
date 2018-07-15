@@ -37,6 +37,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4398438159865118}
+  - component: {fileID: 114704728632711990}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -293,7 +294,7 @@ Light:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1519731362699238}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 8
   m_Type: 0
   m_Color: {r: 0.58387387, g: 0, b: 0.83823526, a: 1}
@@ -323,6 +324,22 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114704728632711990
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1357941349338482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f583eefcd527af643b82c63396efe58d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyPrefab: {fileID: 1620617443737188, guid: d9f616354a9ce924aa44ec4fdc672df0,
+    type: 2}
+  _maxEnemies: 3
+  _activateDelay: 12
+  _spawnRadius: 2
 --- !u!114 &114765461497528398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -395,7 +412,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1524528689
+  randomSeed: 123818117
   InitialModule:
     serializedVersion: 3
     enabled: 1

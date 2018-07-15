@@ -35,6 +35,8 @@ public class LevelGenerator : MonoBehaviour
 	[Title ("Generate")]
 	[SerializeField] bool _generateOnAwake;
 	[SerializeField] bool _IsEditMode;
+	bool _playerSpawned;
+	[SerializeField] Transform _playerSpawnLoc;
 
 	Collider[] _colliders;
 
@@ -135,6 +137,9 @@ public class LevelGenerator : MonoBehaviour
 	void GenerateLevel ()
 	{
 		Debug.Log ("Generating Level");
+		Room tempRoom;
+		RoomPrefabType rpt;
+		Transform trans;
 
 		for (int x = 0; x < _gridSize; x++)
 		{
@@ -142,7 +147,15 @@ public class LevelGenerator : MonoBehaviour
 			{
 				if (_levelMatrix[x, y] == (int) SpaceType.Occupied || _levelMatrix[x, y] == (int) SpaceType.Start)
 				{
-					RandYRot (Instantiate (_roomPrefabs.GetRandomFromList ().transform, MatrixToGridCoordinates (x, y), Quaternion.identity, transform));
+					tempRoom = Instantiate (_roomPrefabs.GetRandomFromList (), MatrixToGridCoordinates (x, y), Quaternion.identity, transform);
+					RandYRot (tempRoom.transform);
+					rpt = tempRoom._roomPrefabType;
+
+					if (rpt != RoomPrefabType.Undefined)
+					{
+						trans = PrefabGenerator._instance.GetPrefab (rpt);
+						Instantiate (trans, tempRoom._spawnLocation.position, Quaternion.identity, tempRoom.transform);
+					}
 				}
 			}
 		}
