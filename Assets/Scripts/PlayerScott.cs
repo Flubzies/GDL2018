@@ -20,11 +20,20 @@ public class PlayerScott : MonoBehaviour
 
     [Title ("Player Atttacking")]
     [SerializeField] Transform _firePoint;
+    [SerializeField] int _playerDamage;
     [SerializeField] float _attackDuration = 0.5f;
     float _timeUntilLastAttack;
     [SerializeField] float _attackRate = 0.08f;
+    [SerializeField] float _attackSphereSize = 1.5f;
+    [SerializeField] ParticleSystem _hitEffect;
     float _timeUntilNextAttackRate;
     bool _isAttacking;
+
+    [SerializeField] float _particleEffectRate = 0.3f;
+    float _timeUntilNextEffect;
+
+    Collider[] _colliders;
+    [SerializeField] LayerMask _enemyLM;
 
     Vector3 _movement;
     Vector3 _shootDir;
@@ -32,8 +41,8 @@ public class PlayerScott : MonoBehaviour
     private Vector3 _mousePos;
     private Vector3 _direction;
 
-    public ParticleSystem particleSwipe;
-    public AudioSource SlashSound;
+    public ParticleSystem _particleSystem;
+    public AudioSource _slashSound;
 
     [Title ("Animations")]
     [SerializeField] Animator _animator;
@@ -94,14 +103,27 @@ public class PlayerScott : MonoBehaviour
         {
             if (Input.GetMouseButtonDown (0))
             {
+                Health h;
                 _isAttacking = true;
-                AttackAbility ();
-                _timeUntilNextAttackRate = Time.time + 1 / _attackRate;
+                // AttackAbility ();
+                _particleSystem.Emit (1);
+                _slashSound.Play ();
                 _animator.SetTrigger ("isAttacking");
-                SlashSound.Play ();
+                _timeUntilNextAttackRate = Time.time + 1 / _attackRate;
+                _colliders = Physics.OverlapSphere (_firePoint.position, _attackSphereSize, _enemyLM);
+
+                foreach (var item in _colliders)
+                {
+                    h = item.GetComponent<Health> ();
+                    if (h)
+                    {
+                        Debug.Log("Damagin");
+                        h.Damage (_playerDamage);
+                        _hitEffect.Play ();
+                    }
+                }
 
                 //Debug.Log ("not working");
-
             }
         }
     }
@@ -113,12 +135,9 @@ public class PlayerScott : MonoBehaviour
 
     IEnumerator RotateForAttackDuration ()
     {
-        yield return new WaitForSeconds (0.3f);
-        particleSwipe.Emit (1);
-
         while (_isAttacking)
         {
-            PlayerRotation ();
+            // PlayerRotation ();
             yield return null;
         }
     }

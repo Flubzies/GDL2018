@@ -10,12 +10,15 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField] protected float _activateDelay;
     [SerializeField] protected float _spawnRadius;
+    [SerializeField] Health _health;
 
     void Start ()
     {
         _listEnemies = new List<GameObject> ();
         StartCoroutine (CreateEnemies ());
         StartCoroutine (SpawnEnemiesWithDelay ());
+        _health.DeathEvent += ThisDeath;
+        _health.DamagedEvent += ThisDamage;
     }
 
     Vector3 SpawnLoc ()
@@ -39,6 +42,16 @@ public class EnemySpawner : MonoBehaviour
             yield return new WaitForSeconds (_activateDelay / 2.0f);
             CreateEnemy ();
         }
+    }
+
+    void ThisDeath ()
+    {
+        gameObject.SetActive (false);
+    }
+
+    void ThisDamage ()
+    {
+        Debug.Log (_health._GetHealthPercent);
     }
 
     IEnumerator SpawnEnemiesWithDelay ()
