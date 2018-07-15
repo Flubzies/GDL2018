@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabGenerator : Singleton<PrefabGenerator>
+public class PrefabGenerator : MonoBehaviour
 {
 	[SerializeField] List<PrefabProperties> _roomPrefabList;
 

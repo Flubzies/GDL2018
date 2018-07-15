@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 33091897507284500}
   - component: {fileID: 23408535184707194}
   - component: {fileID: 65712866407483666}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Test_Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5143,6 +5143,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roomRarity: 1
+  _roomPrefabType: 0
+  _spawnLocation: {fileID: 0}
 --- !u!136 &136000337598852216
 CapsuleCollider:
   m_ObjectHideFlags: 1
