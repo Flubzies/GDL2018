@@ -15,8 +15,8 @@ public class FBXImporter : AssetPostprocessor
 			importer.importCameras = false;
 			importer.importBlendShapes = false;
 			importer.importLights = false;
-			importer.importAnimation = false;
-			importer.importMaterials = false;
+			// importer.importAnimation = false;
+			// importer.importMaterials = false;
 		}
 	}
 }

@@ -18,11 +18,10 @@ public class CameraController : MonoBehaviour
 
 	void Update ()
 	{
-		if (InputManager._instance._InputMode == InputMode.Game)
-		{
-			CamMovementPC ();
-			ScrollZoom();
-		}
+
+		CamMovementPC ();
+		ScrollZoom ();
+
 	}
 
 	private void CamMovementPC ()

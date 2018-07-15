@@ -5,7 +5,11 @@ public static class SafeDestroy
 	static T DestroyObject<T> (T obj_, float deathTimer_) where T : Object
 	{
 		if (!Application.isPlaying) Object.DestroyImmediate (obj_);
-		else Object.Destroy (obj_, deathTimer_);
+		else
+		{
+			Object.Destroy (obj_, deathTimer_);
+			Debug.Log ("AA");
+		}
 		return null;
 	}
 

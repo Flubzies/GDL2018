@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Pathfinding;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class LevelGenerator : SerializedMonoBehaviour
+public class LevelGenerator : MonoBehaviour
 {
 
 	public enum SpaceType
@@ -16,15 +17,24 @@ public class LevelGenerator : SerializedMonoBehaviour
 
 	int[, ] _levelMatrix;
 
+	[Title ("Level Generation")]
+
 	[SerializeField] int _gridSize;
 	[SerializeField] int _roomSize;
 	[SerializeField] float _minRoomCount;
 	[SerializeField] int _maxFailCount = 5;
 
+	[Title ("Room Generation")]
+
 	[SerializeField] List<Room> _roomPrefabs;
 	[Tooltip ("Must be Up Down Left Right")]
 	[SerializeField] List<Transform> _wallpoints;
 	[SerializeField] LayerMask _wallsLayerMask;
+	[SerializeField] AstarPath _astar;
+
+	[Title ("Generate")]
+	[SerializeField] bool _generateOnAwake;
+	[SerializeField] bool _skipSafeDestroy;
 
 	Collider[] _colliders;
 
@@ -32,27 +42,41 @@ public class LevelGenerator : SerializedMonoBehaviour
 	int _failCount;
 	bool _generateLevel;
 
+	public static LevelGenerator _instance = null;
+	void Awake ()
+	{
+		if (_instance == null)
+			_instance = this;
+		else if (_instance != this) Destroy (gameObject);
+
+		if (_generateOnAwake) GenerateNewLevel ();
+	}
+
+	private void Update ()
+	{
+		// REMEMBER
+		if (Input.GetKeyDown (KeyCode.Space))
+		{
+			GenerateNewLevel ();
+		}
+	}
+
 	[ButtonGroup ("Level Generator", 0)]
 	void DestroyAllChildren ()
 	{
-		for (int i = transform.childCount - 1; i >= 0; i--)
+
+		Debug.Log (transform.childCount);
+		for (int i = 0; i < transform.childCount; i++)
 		{
-			SafeDestroy.DestroyGameObject (transform.GetChild (0));
+			GameObject.Destroy (transform.GetChild (0).gameObject);
 		}
+
 	}
 
 	[ButtonGroup ("Level Generator", 0)]
 	void ResetMatrix ()
 	{
 		_levelMatrix = new int[_gridSize, _gridSize];
-
-		// for (int x = 0; x < _gridSize; x++)
-		// {
-		// 	for (int y = 0; y < _gridSize; y++)
-		// 	{
-		// 		_levelMatrix[x, y] = new int ();
-		// 	}
-		// }
 
 		for (int x = 0; x < _gridSize; x++)
 		{
@@ -105,7 +129,6 @@ public class LevelGenerator : SerializedMonoBehaviour
 	void GenerateLevel ()
 	{
 		Debug.Log ("Generating Level");
-		DestroyAllChildren ();
 
 		for (int x = 0; x < _gridSize; x++)
 		{
@@ -133,9 +156,10 @@ public class LevelGenerator : SerializedMonoBehaviour
 		GenerateMatrix ();
 		GenerateLevel ();
 		DestroyWalls ();
+		_astar.Scan ();
 	}
 
-	[Button (ButtonSizes.Large)]
+	[ButtonGroup ("Level Generator", 4)]
 	void DestroyWalls ()
 	{
 		Debug.Log ("Destroying walls.");
@@ -171,12 +195,11 @@ public class LevelGenerator : SerializedMonoBehaviour
 				// We now have the adjacent room count 
 				// And the positions of the walls.
 
-				// Debug.Log (MatrixToGridCoordinates (x, y));
-
 				DestroyWallsAt (wallPosition, adjRooms, MatrixToGridCoordinates (x, y));
 			}
 		}
 		Debug.Log ("Completed");
+		_astar.Scan ();
 	}
 
 	void DestroyWallsAt (bool[] wallPositions_, int adjRooms_, Vector3 roomPos_)
@@ -236,10 +259,12 @@ public class LevelGenerator : SerializedMonoBehaviour
 	void DestroyWall (Vector3 pos_)
 	{
 		_colliders = Physics.OverlapSphere (pos_, 0.2f, _wallsLayerMask);
+
 		foreach (Collider col in _colliders)
 		{
-			SafeDestroy.DestroyGameObject (col);
+			Destroy (col.gameObject);
 		}
+
 	}
 
 	Vector3 MatrixToGridCoordinates (int x_, int y_)
@@ -273,7 +298,8 @@ public class LevelGenerator : SerializedMonoBehaviour
 
 	private void OnValidate ()
 	{
-
+		if (_generateOnAwake) _skipSafeDestroy = true;
+		else _skipSafeDestroy = false;
 	}
 
 }
