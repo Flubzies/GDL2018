@@ -34,7 +34,7 @@ public class LevelGenerator : MonoBehaviour
 
 	[Title ("Generate")]
 	[SerializeField] bool _generateOnAwake;
-	[SerializeField] bool _skipSafeDestroy;
+	[SerializeField] bool _IsEditMode;
 
 	Collider[] _colliders;
 
@@ -49,26 +49,32 @@ public class LevelGenerator : MonoBehaviour
 			_instance = this;
 		else if (_instance != this) Destroy (gameObject);
 
-		if (_generateOnAwake) GenerateNewLevel ();
-	}
-
-	private void Update ()
-	{
-		// REMEMBER
-		if (Input.GetKeyDown (KeyCode.Space))
+		if (_generateOnAwake)
 		{
-			GenerateNewLevel ();
+			DestroyAllChildren ();
+			ResetMatrix ();
+			GenerateMatrix ();
+			GenerateLevel ();
 		}
+		if (_generateOnAwake) GenerateNewLevel ();
 	}
 
 	[ButtonGroup ("Level Generator", 0)]
 	void DestroyAllChildren ()
 	{
-
-		Debug.Log (transform.childCount);
-		for (int i = 0; i < transform.childCount; i++)
+		if (_IsEditMode)
 		{
-			GameObject.Destroy (transform.GetChild (0).gameObject);
+			for (int i = transform.childCount - 1; i >= 0; i--)
+			{
+				SafeDestroy.DestroyGameObject (transform.GetChild (0));
+			}
+		}
+		else
+		{
+			foreach (Transform tran in transform)
+			{
+				Destroy (tran.gameObject);
+			}
 		}
 
 	}
@@ -199,7 +205,13 @@ public class LevelGenerator : MonoBehaviour
 			}
 		}
 		Debug.Log ("Completed");
-		_astar.Scan ();
+		StartCoroutine (ScanGraph ());
+	}
+
+	IEnumerator ScanGraph ()
+	{
+		yield return new WaitForSeconds (1.0f);
+		_astar.graphs[0].Scan ();
 	}
 
 	void DestroyWallsAt (bool[] wallPositions_, int adjRooms_, Vector3 roomPos_)
@@ -260,11 +272,20 @@ public class LevelGenerator : MonoBehaviour
 	{
 		_colliders = Physics.OverlapSphere (pos_, 0.2f, _wallsLayerMask);
 
-		foreach (Collider col in _colliders)
+		if (_IsEditMode)
 		{
-			Destroy (col.gameObject);
+			for (int i = 0; i < _colliders.Length; i++)
+			{
+				SafeDestroy.DestroyGameObject (_colliders[i]);
+			}
 		}
-
+		else
+		{
+			foreach (Collider col in _colliders)
+			{
+				Destroy (col.gameObject);
+			}
+		}
 	}
 
 	Vector3 MatrixToGridCoordinates (int x_, int y_)
@@ -298,8 +319,7 @@ public class LevelGenerator : MonoBehaviour
 
 	private void OnValidate ()
 	{
-		if (_generateOnAwake) _skipSafeDestroy = true;
-		else _skipSafeDestroy = false;
+
 	}
 
 }

@@ -26,6 +26,7 @@ public class EnemyAI : MonoBehaviour
 	[Title ("Effects")]
 	[SerializeField] AudioSource _audioSource;
 	[SerializeField] Animator _animator;
+	[SerializeField] float _xAxisOffset = 90;
 
 	Path _path;
 	Seeker _seeker;
@@ -63,7 +64,9 @@ public class EnemyAI : MonoBehaviour
 	private void LateUpdate ()
 	{
 		_armature.position = transform.position;
-		_armature.rotation = transform.rotation;
+		Vector3 tempVec = transform.rotation.eulerAngles;
+		tempVec.x = _xAxisOffset;
+		_armature.rotation = Quaternion.Euler (tempVec);
 	}
 
 	IEnumerator UpdatePath ()
