@@ -118,6 +118,7 @@ public class PlayerScott : MonoBehaviour
 				anim.SetTrigger ("isAttacking");
 				SlashSound.Play ();
 
+
 				//Debug.Log ("not working");
 
 
@@ -137,6 +138,7 @@ public class PlayerScott : MonoBehaviour
     {
 		yield return new WaitForSeconds (0.3f);
 		particleSwipe.Emit (1);
+
 
         while (_isAttacking)
         {
