@@ -35,6 +35,7 @@ ModelImporter:
     7400000: Take 001
     7400002: Armature|Idle
     7400004: Armature|Run
+    7400006: Ooze|Run
     9500000: //RootNode
     13700000: Ooze_LowPoly:Ooze
     13700002: Ooze

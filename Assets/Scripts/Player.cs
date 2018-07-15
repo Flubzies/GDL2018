@@ -1,8 +1,9 @@
-﻿using DG.Tweening;
+﻿using System.Collections;
+using System.Collections.Generic;
+using DG.Tweening;
 using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
-
 
 public class Player : MonoBehaviour
 {
@@ -10,29 +11,43 @@ public class Player : MonoBehaviour
     [SerializeField] float _moveSpeed = 1.0f;
     [SerializeField] float _decelerationRate = 1.0f;
     [SerializeField] float _deadZone = 0.01f;
+    [SerializeField] Rigidbody _rb;
     [SerializeField] Transform _cameraOffset;
 
     [Title ("Player Rotation")]
+    [SerializeField] float _rotationDeadZone = 0.1f;
     [SerializeField] float _rotSpeed = 1.0f;
     [SerializeField] float _rotationOffset = -90.0f;
 
-    [Title ("Player Shooting")]
-    [SerializeField] float _fireRange;
+    [Title ("Player Atttacking")]
     [SerializeField] Transform _firePoint;
+    [SerializeField] float _attackDuration = 0.5f;
+    float _timeUntilLastAttack;
+    [SerializeField] float _attackRate = 0.08f;
+    float _timeUntilNextAttackRate;
+    bool _isAttacking;
 
-    [SerializeField] Rigidbody _rb;
     Vector3 _movement;
     Vector3 _shootDir;
 
-    //Private Vars
     private Vector3 _mousePos;
     private Vector3 _direction;
+
+    [Title ("Animations")]
+    [SerializeField] Animator _animator;
+    [HideInInspector] public float _velX;
+    [HideInInspector] public float _velY;
+    [HideInInspector] public bool _isMoving;
+    [HideInInspector] public bool _justAttacked;
 
     void FixedUpdate ()
     {
         PlayerMovement ();
-        PlayerRotation ();
-        PlayerShoot ();
+    }
+
+    private void Update ()
+    {
+        PlayerAttack ();
     }
 
     private void PlayerMovement ()
@@ -40,12 +55,25 @@ public class Player : MonoBehaviour
         _movement = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));
         if (_movement.magnitude > _deadZone)
         {
+            _isMoving = true;
+
             Vector3 newMovement = _cameraOffset.forward * _movement.normalized.z + _cameraOffset.right * _movement.normalized.x;
             newMovement = Vector3.ClampMagnitude (newMovement, 1 / Mathf.Sqrt (2)) * Mathf.Sqrt (2);
 
             _rb.velocity = newMovement * _moveSpeed * Time.fixedDeltaTime;
         }
-        else _rb.velocity *= _decelerationRate * Time.fixedDeltaTime;
+        else
+        {
+            _isMoving = false;
+            _rb.velocity *= _decelerationRate * Time.fixedDeltaTime;
+        }
+        if (!_isAttacking && _rb.velocity.magnitude > _rotationDeadZone)
+        {
+            transform.rotation = Quaternion.LookRotation (_rb.velocity, Vector3.up);
+        }
+
+        _velX = _rb.velocity.x;
+        _velY = _rb.velocity.y;
     }
 
     private void PlayerRotation ()
@@ -59,27 +87,37 @@ public class Player : MonoBehaviour
         transform.rotation = Quaternion.Lerp (transform.rotation, _newQuat, Time.time * _rotSpeed);
     }
 
-    private void PlayerShoot ()
+    private void PlayerAttack ()
     {
-        if (Input.GetMouseButtonDown (0))
+        if (_isAttacking && Time.time > _timeUntilLastAttack && _attackDuration != 0)
         {
-            // RaycastHit hit;
-            // Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-            // if (Physics.Raycast (ray, out hit, 1000f, _shootLayer))
-            // {
-            //     if (hit.collider)
-            //     {
-            //         // Rotate to that position
-            //         _shootDir = hit.point - transform.position;
-            //         _shootDir.y = 0;
-            //         Debug.DrawRay (_firePoint.forward + transform.position, _shootDir.normalized * _fireRange, Color.red, 2.0f);
-            //     }
-            // }
+            _isAttacking = false;
+            _justAttacked = false;
+            _timeUntilLastAttack = Time.time + 1 / _attackDuration;
+        }
 
-            // Projectile p = Instantiate (_projectile, _firePoint.forward + transform.position, Quaternion.identity, transform);
-            // p.SetVelocity (_firePoint.forward);
-            // SafeDestroy.DestroyGameObject (p, _bulletLifeTime);
+        if (Time.time > _timeUntilNextAttackRate && _attackRate != 0)
+        {
+            if (Input.GetMouseButtonDown (0))
+            {
+                _isAttacking = true;
+                _justAttacked = true;
+                AttackAbility ();
+                _timeUntilNextAttackRate = Time.time + 1 / _attackRate;
+            }
+        }
+    }
+    void AttackAbility ()
+    {
+        StartCoroutine (RotateForAttackDuration ());
+    }
 
+    IEnumerator RotateForAttackDuration ()
+    {
+        while (_isAttacking)
+        {
+            PlayerRotation ();
+            yield return null;
         }
     }
 
