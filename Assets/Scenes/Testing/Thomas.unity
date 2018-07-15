@@ -144,8 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a97821aa7432a479827ea60185f78c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
-  rotSpeed: 0
 --- !u!54 &72513918
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -325,10 +323,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 180b4f5f78ef656448729f8016692e6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minColour: {r: 1, g: 1, b: 1, a: 0}
-  maxColour: {r: 0, g: 0, b: 0, a: 0}
-  skinnedMesh: 0
-  applyToAllMaterials: 0
 --- !u!23 &445278067
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1023,11 +1017,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e149c21f98f99646bbb763acfed455c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefabs:
-  - {fileID: 100000, guid: 4db9d9b32c02c7f4e83ae4d0a82eb3e4, type: 3}
-  - {fileID: 100000, guid: 4db9d9b32c02c7f4e83ae4d0a82eb3e4, type: 3}
-  - {fileID: 100000, guid: 4db9d9b32c02c7f4e83ae4d0a82eb3e4, type: 3}
-  - {fileID: 100000, guid: 4db9d9b32c02c7f4e83ae4d0a82eb3e4, type: 3}
-  - {fileID: 100000, guid: 4db9d9b32c02c7f4e83ae4d0a82eb3e4, type: 3}
-  _activateDelay: 2
-  _spawnLocation: {fileID: 2072527242}
+  _enemyPrefab: {fileID: 100000, guid: 4db9d9b32c02c7f4e83ae4d0a82eb3e4, type: 3}
+  _activateDelay: 5
+  _spawnArea: {fileID: 2072527242}
+  _spawnRadius: 4
+  _maxEnemies: 3
