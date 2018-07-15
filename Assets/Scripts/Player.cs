@@ -3,7 +3,7 @@ using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-[RequireComponent (typeof (Rigidbody))]
+
 public class Player : MonoBehaviour
 {
     [Title ("Player Movement")]
@@ -19,11 +19,8 @@ public class Player : MonoBehaviour
     [Title ("Player Shooting")]
     [SerializeField] float _fireRange;
     [SerializeField] Transform _firePoint;
-    // [SerializeField] LayerMask _shootLayer;
-    [SerializeField] Projectile _projectile;
-    [SerializeField] float _bulletLifeTime = 2.0f;
 
-    Rigidbody _rb;
+    [SerializeField] Rigidbody _rb;
     Vector3 _movement;
     Vector3 _shootDir;
 
@@ -33,12 +30,9 @@ public class Player : MonoBehaviour
 
     void FixedUpdate ()
     {
-        if (InputManager._instance._InputMode == InputMode.Game)
-        {
-            PlayerMovement ();
-            PlayerRotation ();
-            PlayerShoot ();
-        }
+        PlayerMovement ();
+        PlayerRotation ();
+        PlayerShoot ();
     }
 
     private void PlayerMovement ()
@@ -82,9 +76,9 @@ public class Player : MonoBehaviour
             //     }
             // }
 
-            Projectile p = Instantiate (_projectile, _firePoint.forward + transform.position, Quaternion.identity, transform);
-            p.SetVelocity (_firePoint.forward);
-            SafeDestroy.DestroyGameObject (p, _bulletLifeTime);
+            // Projectile p = Instantiate (_projectile, _firePoint.forward + transform.position, Quaternion.identity, transform);
+            // p.SetVelocity (_firePoint.forward);
+            // SafeDestroy.DestroyGameObject (p, _bulletLifeTime);
 
         }
     }
@@ -92,11 +86,5 @@ public class Player : MonoBehaviour
     float AngleBetweenTwoPoints (Vector3 a, Vector3 b)
     {
         return Mathf.Atan2 (a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
-    }
-
-    private void OnValidate ()
-    {
-        if (_rb == null) _rb = GetComponent<Rigidbody> ();
-        // if (_shootLayer.value == 0) Debug.LogError (_shootLayer);
     }
 }

@@ -494,7 +494,7 @@ GameObject:
   - component: {fileID: 33446811730637868}
   - component: {fileID: 23071916627230362}
   - component: {fileID: 65313382793476026}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Test_Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -814,6 +814,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4299687217502462}
+  - component: {fileID: 114013660197763606}
   m_Layer: 0
   m_Name: S1Room 1
   m_TagString: Untagged
@@ -4576,3 +4577,15 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.104943, y: 6.3127813, z: 7.000002}
   m_Center: {x: 0.05247129, y: 3.1563907, z: 0}
+--- !u!114 &114013660197763606
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1755826463938616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57412948ea1a1c3418a98c88b06be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _roomRarity: 1

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class LevelGenerator : SerializedMonoBehaviour
+public class LevelGenerator : MonoBehaviour
 {
 
 	public enum SpaceType
