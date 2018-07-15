@@ -34,7 +34,7 @@ public class LevelGenerator : MonoBehaviour
 
 	[SerializeField] PrefabGenerator _prefabGen;
 	bool _playerSpawned;
-	[SerializeField] Transform _player;
+	[SerializeField] PlayerScott _player;
 	[SerializeField] Transform _camera;
 
 	[Title ("Generate")]
@@ -153,7 +153,7 @@ public class LevelGenerator : MonoBehaviour
 					tempRoom = Instantiate (_roomPrefabs.GetRandomFromList (), MatrixToGridCoordinates (x, y), Quaternion.identity, transform);
 					RandYRot (tempRoom.transform);
 					rpt = tempRoom._roomPrefabType;
-					
+
 					if (rpt != RoomPrefabType.Undefined)
 					{
 						trans = _prefabGen.GetPrefab (rpt);
@@ -178,7 +178,7 @@ public class LevelGenerator : MonoBehaviour
 		GenerateMatrix ();
 		GenerateLevel ();
 		DestroyWalls ();
-		_astar.Scan ();
+		StartCoroutine (ScanGraph ());
 	}
 
 	[ButtonGroup ("Level Generator", 4)]
@@ -221,7 +221,6 @@ public class LevelGenerator : MonoBehaviour
 			}
 		}
 		Debug.Log ("Completed");
-		StartCoroutine (ScanGraph ());
 	}
 
 	IEnumerator ScanGraph ()

@@ -75,7 +75,6 @@ public class EnemyAI : MonoBehaviour
 	{
 		if (_target != null)
 		{
-			Debug.Log ("Moving towards player");
 
 			_animator.SetBool ("_isMoving", true);
 			_seeker.StartPath (transform.position, _target.position, OnPathComplete);
