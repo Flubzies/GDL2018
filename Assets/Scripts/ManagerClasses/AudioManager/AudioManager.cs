@@ -21,6 +21,8 @@ namespace Managers
 
 				s._source.outputAudioMixerGroup = mixerGroup;
 			}
+
+			Play ("Tainted_SoundTrack");
 		}
 
 		public void StopSound (string sound)

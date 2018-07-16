@@ -165,10 +165,13 @@ public class EnemyAI : MonoBehaviour
 
 	private void OnCollisionEnter (Collision other)
 	{
-		Health h = other.transform.GetComponent<Health> ();
-		if (h)
+		if (other.gameObject.CompareTag ("Player"))
 		{
-			h.Damage (_damageAmount);
+			Health h = other.transform.GetComponent<Health> ();
+			if (h)
+			{
+				h.Damage (_damageAmount);
+			}
 		}
 	}
 }
