@@ -4490,8 +4490,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8cbd2a76c8bba34393c59d126af4269, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MinMaxValueSlider: {x: -7.3208942, y: 0.88874626}
-  WithFields: {x: 0, y: 0}
+  MinMaxValueSlider: {x: -7.0654907, y: -0.45340002}
+  WithFields: {x: -3.7867641, y: 6.1397066}
 --- !u!1 &1630717469
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,12 +11,12 @@ public class FBXImporter : AssetPostprocessor
 		if (name.Substring (name.Length - 4, 4) == ".fbx")
 		{
 			importer.useFileScale = true;
-			importer.isReadable = false;
+			// importer.isReadable = false;
 			importer.importCameras = false;
 			importer.importBlendShapes = false;
 			importer.importLights = false;
 			// importer.importAnimation = false;
-			// importer.importMaterials = false;
+			importer.importMaterials = false;
 		}
 	}
 }

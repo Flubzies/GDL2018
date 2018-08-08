@@ -7,66 +7,40 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : SemiSingleton<PlayerController>
 {
     [Title ("Player Movement")]
     [SerializeField] float _moveSpeed = 1.0f;
     [SerializeField] float _decelerationRate = 1.0f;
-    [SerializeField] float _deadZone = 0.01f;
-    [SerializeField] Rigidbody _rb;
+    [SerializeField] float _movementDeadZone = 0.01f;
+    [SerializeField] Rigidbody _playerRB;
     [SerializeField] Transform _cameraOffset;
 
     [Title ("Player Rotation")]
-    [SerializeField] float _rotationDeadZone = 0.1f;
     [SerializeField] float _rotSpeed = 1.0f;
+    [SerializeField] float _rotationDeadzone = 0.1f;
     [SerializeField] float _rotationOffset = -90.0f;
 
-    [Title ("Player Atttacking")]
-    [SerializeField] List<Transform> _firePoint;
+    [Title ("Player Attack")]
     [SerializeField] int _playerDamage;
-    [SerializeField] float _attackDuration = 0.5f;
-    float _timeUntilLastAttack;
-    [SerializeField] float _attackRate = 0.08f;
-    [SerializeField] float _attackSphereSize = 1.5f;
-    [SerializeField] ParticleSystem _hitEffect;
-    float _timeUntilNextAttackRate;
+    [SerializeField] Weapon _playerWeapon;
+    [SerializeField] TimedEvent _attackEvent;
+
     bool _isAttacking;
 
-    [SerializeField] float _particleEffectRate = 0.3f;
-    float _timeUntilNextEffect;
-
-    Collider[] _colliders;
-    [SerializeField] LayerMask _enemyLM;
-
-    Vector3 _movement;
-    Vector3 _shootDir;
-
-    private Vector3 _mousePos;
-    private Vector3 _direction;
-
-    public ParticleSystem _particleSystem;
-    public AudioSource _slashSound;
-
-    [Title ("Animations")]
+    [Title ("Effects")]
     [SerializeField] Animator _animator;
+    [SerializeField] ParticleSystem _slashPS;
+    [SerializeField] List<AudioSource> _slashSound;
+
+    [Title ("HealthBar")]
     [SerializeField] Health _health;
-    [SerializeField] Slider _slider;
+    [SerializeField] Image _healthBar;
 
     private void Awake ()
     {
-        _health.DamagedEvent += ThisDamaged;
-        _health.DeathEvent += ThisDeath;
+        _playerWeapon._Damage = _playerDamage;
         _cameraOffset = GameObject.FindGameObjectWithTag ("CamOffset").transform;
-    }
-
-    void ThisDamaged ()
-    {
-        _slider.value = _health._GetHealthPercent;
-    }
-
-    void ThisDeath ()
-    {
-        SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
     }
 
     void FixedUpdate ()
@@ -76,33 +50,51 @@ public class PlayerController : MonoBehaviour
 
     private void Update ()
     {
-        PlayerAttack ();
+        if (Input.GetMouseButtonDown (0) && _attackEvent.IsEventReady ())
+        {
+            _attackEvent.TriggerEvent (this);
+            _attackEvent.OnEventComplete (OnAttackComplete);
+        }
     }
 
     private void PlayerMovement ()
     {
-        _movement = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));
-        if (_movement.magnitude > _deadZone)
+        if (_isAttacking)
+        {
+            StopMoving ();
+            return;
+        }
+
+        Vector3 movement = new Vector3 (Input.GetAxis ("Horizontal"), 0, Input.GetAxis ("Vertical"));
+        Vector3 finalVelocity = Vector3.zero;
+
+        if (movement.magnitude > _movementDeadZone)
         {
             _animator.SetBool ("isRunning", true);
-            Vector3 newMovement = _cameraOffset.forward * _movement.normalized.z + _cameraOffset.right * _movement.normalized.x;
+            Vector3 newMovement = _cameraOffset.forward * movement.normalized.z + _cameraOffset.right * movement.normalized.x;
             newMovement = Vector3.ClampMagnitude (newMovement, 1 / Mathf.Sqrt (2)) * Mathf.Sqrt (2);
 
-            _rb.velocity = newMovement * _moveSpeed * Time.fixedDeltaTime;
+            finalVelocity = newMovement * _moveSpeed * Time.fixedDeltaTime;
+            _playerRB.velocity = finalVelocity;
         }
         else
         {
-            _rb.velocity *= _decelerationRate * Time.fixedDeltaTime;
-            _animator.SetBool ("isRunning", false);
-        }
-        if (!_isAttacking && _rb.velocity.magnitude > _rotationDeadZone)
-        {
-            transform.rotation = Quaternion.LookRotation (_rb.velocity, Vector3.up);
+            StopMoving ();
         }
 
+        if (finalVelocity.magnitude > _rotationDeadzone)
+        {
+            transform.rotation = Quaternion.LookRotation (finalVelocity, Vector3.up);
+        }
     }
 
-    private void PlayerRotation ()
+    private void StopMoving ()
+    {
+        _playerRB.velocity *= _decelerationRate * Time.fixedDeltaTime;
+        _animator.SetBool ("isRunning", false);
+    }
+
+    private void RotateToMouse ()
     {
         Vector3 positionOnScreen = Camera.main.WorldToViewportPoint (transform.position);
         Vector3 mouseOnScreen = (Vector3) Camera.main.ScreenToViewportPoint (Input.mousePosition);
@@ -113,59 +105,27 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Lerp (transform.rotation, _newQuat, Time.time * _rotSpeed);
     }
 
-    private void PlayerAttack ()
+    public void PlayerAttack ()
     {
-        if (_isAttacking && Time.time > _timeUntilLastAttack && _attackDuration != 0)
-        {
-            _isAttacking = false;
-            _timeUntilLastAttack = Time.time + 1 / _attackDuration;
-        }
-
-        if (Time.time > _timeUntilNextAttackRate && _attackRate != 0)
-        {
-            if (Input.GetMouseButtonDown (0))
-            {
-                Health h;
-                _hitEffect.Play ();
-                _isAttacking = true;
-                // AttackAbility ();
-                _particleSystem.Emit (1);
-                _slashSound.Play ();
-                _animator.SetTrigger ("isAttacking");
-                _timeUntilNextAttackRate = Time.time + 1 / _attackRate;
-                foreach (var firePoint in _firePoint)
-                {
-                    _colliders = Physics.OverlapSphere (firePoint.position, _attackSphereSize, _enemyLM);
-
-                    foreach (var item in _colliders)
-                    {
-                        h = item.GetComponent<Health> ();
-                        if (h != null)
-                        {
-                            h.Damage (_playerDamage);
-                            // _hitEffect.transform.position = item.transform.position;
-                            // _hitEffect.Play ();
-                        }
-                    }
-                }
-
-                //Debug.Log ("not working");
-            }
-        }
+        _isAttacking = true;
+        RotateToMouse ();
+        _playerWeapon.EnableWeapon ();
+        _animator.SetBool ("isAttacking", true);
+        _slashPS.Clear ();
+        _slashPS.Play ();
+        _slashSound.GetRandomFromList ().Play ();
     }
 
-    void AttackAbility ()
+    void OnAttackComplete ()
     {
-        StartCoroutine (RotateForAttackDuration ());
+        _isAttacking = false;
+        _playerWeapon.DisableWeapon ();
+        _animator.SetBool ("isAttacking", false);
     }
 
-    IEnumerator RotateForAttackDuration ()
+    public void OnDamaged ()
     {
-        while (_isAttacking)
-        {
-            // PlayerRotation ();
-            yield return null;
-        }
+        _healthBar.fillAmount = _health._GetHealthPercent;
     }
 
     float AngleBetweenTwoPoints (Vector3 a, Vector3 b)

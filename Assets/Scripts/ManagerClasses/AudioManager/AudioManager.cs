@@ -4,15 +4,13 @@ using UnityEngine.Audio;
 
 namespace Managers
 {
-	public class AudioManager : Singleton<AudioManager>
+	public class AudioManager : SemiSingleton<AudioManager>
 	{
 		public AudioMixerGroup mixerGroup;
 		public Sound[] sounds;
 
-		protected override void Awake ()
+		void Awake ()
 		{
-			base.Awake ();
-
 			foreach (Sound s in sounds)
 			{
 				s._source = gameObject.AddComponent<AudioSource> ();

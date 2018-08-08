@@ -5,18 +5,16 @@ using UnityEngine.UI;
 namespace Managers
 {
 	[RequireComponent (typeof (CanvasGroup))]
-	public class Menu<T> : Singleton<Menu<T>> where T : MonoBehaviour
+	public class Menu<T> : SemiSingleton<Menu<T>> where T : MonoBehaviour
 	{
 		[SerializeField] CanvasGroup _canvasGroup;
 		[SerializeField] bool _disableCanvasGroupOnStart;
 		[SerializeField] float _menuFadeDuration = 0.2f;
-		[SerializeField] Text _text;
 
 		bool _menuIsOpen;
 
-		protected override void Awake ()
+		void Awake ()
 		{
-			base.Awake ();
 			// _previousInputMode = InputManager._instance._initialInputMode;
 
 			if (_disableCanvasGroupOnStart)
@@ -26,18 +24,13 @@ namespace Managers
 			}
 		}
 
-		public void GameIsOver ()
-		{
-			_text.text = "THE TAINT HAS BEEN DEFEATED!";
-		}
-
 		public void ToggleMenu ()
 		{
 			if (_menuIsOpen) CloseMenu ();
 			else OpenMenu ();
 		}
 
-		public void OpenMenu ()
+		public virtual void OpenMenu ()
 		{
 			Debug.Log ("Opening");
 			if (_menuIsOpen) return;

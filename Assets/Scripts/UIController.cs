@@ -5,11 +5,6 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] protected Image healthBar;
+    // [SerializeField] protected Image healthBar;
 	
-	void Update ()
-    {
-        //healthBar.fillAmount = 
-
-    }
 }
