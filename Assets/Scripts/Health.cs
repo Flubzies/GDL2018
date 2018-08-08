@@ -1,9 +1,7 @@
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
-
-// I have copied this script from my previous assignment submission.
-// Games Hardware and Architecture. 2017/2018
-// fm96.co.uk/projects/venture
+using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
@@ -25,20 +23,13 @@ public class Health : MonoBehaviour
 	[Tooltip ("Show Health Debug Logs in console.")]
 	private bool _debug;
 
-	[SerializeField]
-	[Tooltip ("Prevents damage to GameObject.")]
-	private bool _invincible;
-	public bool _Invincible { get { return _invincible; } set { _invincible = value; } }
+	[SerializeField] bool _invulnerableAfterDamage;
+	[ShowIf ("_invulnerableAfterDamage")]
+	[SerializeField] TimedEvent _invulnerabilityEvent;
+	private bool _invulnerable;
 
-	/// <summary>
-	/// When the health reaches 0 any methods that are subscribed will be called.
-	/// </summary>
-	public event Action DeathEvent;
-
-	/// <summary>
-	/// Called when the GameObject is damaged.
-	/// </summary>
-	public event Action DamagedEvent;
+	public UnityEvent OnDeath, OnDamaged, OnBecomeInvulnerable, OnEndInvulnerable;
+	bool _onDeathInvoked;
 
 	public float _GetHealthPercent
 	{
@@ -52,30 +43,52 @@ public class Health : MonoBehaviour
 
 	void Start ()
 	{
-		Reset ();
+		ResetVariables ();
 	}
 
 	/// <summary>
-	/// Adds to the health.
+	/// Always adds to the health. Use Damage to take away.
 	/// </summary>
-	public void Heal (int _healValue)
+	public void Heal (int healValue_)
 	{
-		_health += Mathf.Abs (_healValue);
+		_health += Mathf.Abs (healValue_);
 		if (_health > _maxHealth) _health = _maxHealth;
-		if (_debug) Debug.Log (gameObject.name + " healed: " + _healValue + " | Health: " + _health);
+		if (_debug) Debug.Log (gameObject.name + " healed: " + healValue_ + " | Health: " + _health);
 	}
 
 	/// <summary>
-	/// Takes away from the health.
+	/// Always takes away from the health. Use Heal to add.
 	/// </summary>
-	public void Damage (int _damageValue)
+	public void Damage (int damageValue_)
 	{
-		if (_invincible) return;
-		_health -= Mathf.Abs (_damageValue);
+		if (_invulnerable) return;
+		_health -= Mathf.Abs (damageValue_);
 		if (_health < 0) _health = 0;
-		if (_debug) Debug.Log (gameObject.name + " damaged: " + _damageValue + " | Health: " + _health);
-		if (DamagedEvent != null) DamagedEvent ();
-		if (IsDead () && DeathEvent != null) DeathEvent ();
+		if (_debug) Debug.Log (gameObject.name + " damaged: " + damageValue_ + " | Health: " + _health);
+		OnDamaged.Invoke ();
+		if (_invulnerableAfterDamage)
+		{
+			OnBecomeInvulnerable.Invoke ();
+			_invulnerable = true;
+			_invulnerabilityEvent.TriggerEvent (this);
+			_invulnerabilityEvent.OnEventComplete (OnEndInvulnerablity);
+		}
+		if (IsDead () && !_onDeathInvoked)
+		{
+			_onDeathInvoked = true;
+			OnDeath.Invoke ();
+		}
+	}
+
+	public void Damage (int damageValue_, Transform damager_, bool knockback_)
+	{
+		// Add knockback here
+	}
+
+	void OnEndInvulnerablity ()
+	{
+		_invulnerable = false;
+		OnEndInvulnerable.Invoke ();
 	}
 
 	/// <summary>
@@ -87,22 +100,17 @@ public class Health : MonoBehaviour
 		return _isDead;
 	}
 
-	/// <summary>
-	/// Resets the health component to its orignal values.
-	/// </summary>
-	public void Reset ()
+	public void ResetVariables ()
 	{
 		_isDead = false;
 		_health = _initialHealth;
+		_onDeathInvoked = false;
 	}
 
 	private void OnValidate ()
 	{
-		if (_initialHealth <= 0)
-			_initialHealth = 1;
-
-		if (_maxHealth < _initialHealth)
-			_maxHealth = _initialHealth;
+		if (_initialHealth <= 0) _initialHealth = 1;
+		if (_maxHealth < _initialHealth) _maxHealth = _initialHealth;
 	}
 
 }

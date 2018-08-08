@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Pathfinding;
+using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class LevelGenerator : MonoBehaviour
+public class LevelGenerator : SemiSingleton<LevelGenerator>
 {
 
 	public enum SpaceType
@@ -30,30 +31,28 @@ public class LevelGenerator : MonoBehaviour
 	[Tooltip ("Must be Up Down Left Right")]
 	[SerializeField] List<Transform> _wallpoints;
 	[SerializeField] LayerMask _wallsLayerMask;
-	[SerializeField] AstarPath _astar;
 
 	[SerializeField] PrefabGenerator _prefabGen;
-	bool _playerSpawned;
-	[SerializeField] PlayerScott _player;
-	[SerializeField] Transform _camera;
+	[SerializeField] NavMeshSurface _navMesh;
+	[SerializeField] Transform _player;
+	[SerializeField] Transform _cameraOffset;
 
 	[Title ("Generate")]
 	[SerializeField] bool _generateOnAwake;
-	[SerializeField] bool _IsEditMode;
+	[SerializeField] bool _isEditMode;
+	[SerializeField] bool _openMenuOnStart;
+	[SerializeField] bool _debug;
 
+	bool _playerSpawned = false;
+	Vector3 _playerSpawnLocation;
 	Collider[] _colliders;
 
 	int _roomCount;
 	int _failCount;
 	bool _generateLevel;
 
-	public static LevelGenerator _instance = null;
 	void Awake ()
 	{
-		if (_instance == null)
-			_instance = this;
-		else if (_instance != this) Destroy (gameObject);
-
 		if (_generateOnAwake)
 		{
 			DestroyAllChildren ();
@@ -67,7 +66,7 @@ public class LevelGenerator : MonoBehaviour
 	[ButtonGroup ("Level Generator", 0)]
 	void DestroyAllChildren ()
 	{
-		if (_IsEditMode)
+		if (_isEditMode)
 		{
 			for (int i = transform.childCount - 1; i >= 0; i--)
 			{
@@ -114,7 +113,7 @@ public class LevelGenerator : MonoBehaviour
 			AddRoomToMatrix (currentPos);
 		}
 
-		Debug.Log ("Matrix Generation Complete. Room Count: " + _roomCount);
+		if (_debug) Debug.Log ("Matrix Generation Complete. Room Count: " + _roomCount);
 	}
 
 	void AddRoomToMatrix (Vector2Int curPos_)
@@ -139,10 +138,11 @@ public class LevelGenerator : MonoBehaviour
 	[ButtonGroup ("Level Generator", 2)]
 	void GenerateLevel ()
 	{
-		Debug.Log ("Generating Level");
+		if (_debug) Debug.Log ("Generating Level");
 		Room tempRoom;
 		RoomPrefabType rpt;
 		Transform trans;
+		int spawnerCount = 0;
 
 		for (int x = 0; x < _gridSize; x++)
 		{
@@ -154,14 +154,28 @@ public class LevelGenerator : MonoBehaviour
 					RandYRot (tempRoom.transform);
 					rpt = tempRoom._roomPrefabType;
 
-					if (rpt != RoomPrefabType.Undefined)
+					if (!_playerSpawned)
 					{
-						trans = _prefabGen.GetPrefab (rpt);
-						Instantiate (trans, tempRoom.transform.position, Quaternion.identity, tempRoom.transform);
+						_cameraOffset.position = _player.transform.position = tempRoom._spawnLocation.position;
+						_playerSpawned = true;
 					}
+					else
+					{
+						if (Random.value > 0.5f) continue;
+
+						if (rpt != RoomPrefabType.Undefined)
+						{
+							trans = _prefabGen.GetPrefab (rpt);
+							Instantiate (trans, tempRoom._spawnLocation.position, Quaternion.identity, tempRoom.transform);
+							if (rpt == RoomPrefabType.EnemySpawner) spawnerCount++;
+						}
+					}
+
 				}
 			}
 		}
+
+		GameManager._Instance.SetSpawnerCount (spawnerCount);
 	}
 
 	protected void RandYRot (Transform trans_)
@@ -178,13 +192,30 @@ public class LevelGenerator : MonoBehaviour
 		GenerateMatrix ();
 		GenerateLevel ();
 		DestroyWalls ();
-		StartCoroutine (ScanGraph ());
+
+		if (!_isEditMode)
+		{
+			StartCoroutine (GenNavMesh ());
+		}
+		else
+		{
+			_navMesh.RemoveData ();
+			_navMesh.BuildNavMesh ();
+		}
+	}
+
+	IEnumerator GenNavMesh ()
+	{
+		if (_openMenuOnStart) SettingsMenu._Instance.OpenMenu ();
+		yield return new WaitForSeconds (1.0f);
+		_navMesh.RemoveData ();
+		_navMesh.BuildNavMesh ();
 	}
 
 	[ButtonGroup ("Level Generator", 4)]
 	void DestroyWalls ()
 	{
-		Debug.Log ("Destroying walls.");
+		if (_debug) Debug.Log ("Destroying walls.");
 
 		int walls = 4;
 		int adjRooms;
@@ -220,13 +251,7 @@ public class LevelGenerator : MonoBehaviour
 				DestroyWallsAt (wallPosition, adjRooms, MatrixToGridCoordinates (x, y));
 			}
 		}
-		Debug.Log ("Completed");
-	}
-
-	IEnumerator ScanGraph ()
-	{
-		yield return new WaitForSeconds (1.0f);
-		_astar.Scan ();
+		if (_debug) Debug.Log ("Completed");
 	}
 
 	void DestroyWallsAt (bool[] wallPositions_, int adjRooms_, Vector3 roomPos_)
@@ -287,7 +312,7 @@ public class LevelGenerator : MonoBehaviour
 	{
 		_colliders = Physics.OverlapSphere (pos_, 0.2f, _wallsLayerMask);
 
-		if (_IsEditMode)
+		if (_isEditMode)
 		{
 			for (int i = 0; i < _colliders.Length; i++)
 			{

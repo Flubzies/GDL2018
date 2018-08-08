@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 33435511416168992}
   - component: {fileID: 23880590559471924}
   - component: {fileID: 65931910347080746}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 33011936045930486}
   - component: {fileID: 23272225155978386}
   - component: {fileID: 65047035034279268}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -341,7 +341,7 @@ GameObject:
   - component: {fileID: 33558703549627602}
   - component: {fileID: 23398902993580208}
   - component: {fileID: 65337086960826998}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -499,7 +499,7 @@ GameObject:
   - component: {fileID: 33371827071557098}
   - component: {fileID: 23306826592095356}
   - component: {fileID: 65726542933468558}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,7 +535,7 @@ GameObject:
   - component: {fileID: 33523388425660382}
   - component: {fileID: 23384855494583754}
   - component: {fileID: 65083321009147912}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -619,6 +619,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4051384468291224}
+  - component: {fileID: 114798337408675896}
   m_Layer: 0
   m_Name: SteeRoom3
   m_TagString: Untagged
@@ -1048,7 +1049,7 @@ GameObject:
   - component: {fileID: 33792261707454680}
   - component: {fileID: 23526726139768642}
   - component: {fileID: 65675829850054640}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1084,7 +1085,7 @@ GameObject:
   - component: {fileID: 33667862525988610}
   - component: {fileID: 23192509133588888}
   - component: {fileID: 65431137562688286}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1244,7 +1245,7 @@ GameObject:
   - component: {fileID: 33024988328682354}
   - component: {fileID: 23010778289943932}
   - component: {fileID: 65149913215619822}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WallConector (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1351,6 +1352,7 @@ GameObject:
   - component: {fileID: 33510667841731966}
   - component: {fileID: 23385090430050356}
   - component: {fileID: 95445818921542420}
+  - component: {fileID: 65298746579490926}
   m_Layer: 9
   m_Name: Test_Floor_New
   m_TagString: Untagged
@@ -5931,6 +5933,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 7, y: 6.0000005, z: 2.25}
   m_Center: {x: -3.5, y: 2.9999998, z: 0.875}
+--- !u!65 &65298746579490926
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1952542882836956}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.01, y: 0.00010107249, z: 0.01}
+  m_Center: {x: 0.0049986048, y: -0.000049457998, z: 0.0049986048}
 --- !u!65 &65315311697786672
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -6416,6 +6430,20 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114798337408675896
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1459475104352676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57412948ea1a1c3418a98c88b06be3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _roomRarity: 1
+  _roomPrefabType: 3
+  _spawnLocation: {fileID: 0}
 --- !u!114 &114968509386720642
 MonoBehaviour:
   m_ObjectHideFlags: 1
