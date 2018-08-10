@@ -43,8 +43,7 @@ public class LevelGenerator : SemiSingleton<LevelGenerator>
 	[SerializeField] bool _openMenuOnStart;
 	[SerializeField] bool _debug;
 
-	bool _playerSpawned = false;
-	Vector3 _playerSpawnLocation;
+	bool _playerPlaced = false;
 	Collider[] _colliders;
 
 	int _roomCount;
@@ -143,6 +142,7 @@ public class LevelGenerator : SemiSingleton<LevelGenerator>
 		RoomPrefabType rpt;
 		Transform trans;
 		int spawnerCount = 0;
+		_playerPlaced = false;
 
 		for (int x = 0; x < _gridSize; x++)
 		{
@@ -154,10 +154,12 @@ public class LevelGenerator : SemiSingleton<LevelGenerator>
 					RandYRot (tempRoom.transform);
 					rpt = tempRoom._roomPrefabType;
 
-					if (!_playerSpawned)
+					if (!_playerPlaced)
 					{
 						_cameraOffset.position = _player.transform.position = tempRoom._spawnLocation.position;
-						_playerSpawned = true;
+						Debug.Log (tempRoom._spawnLocation.position);
+						Debug.Log (_player.transform.position);
+						_playerPlaced = true;
 					}
 					else
 					{
