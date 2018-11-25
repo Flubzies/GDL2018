@@ -1,5 +1,7 @@
 GDL2018 - Team Sollara Games
 
+[GDL Page](https://itch.io/jam/gdl-july-jam)
+
 This repository uses plugins that I'm not allowed to redistribute.
 Please add these plugins to your assets folder to run the project.
 
